@@ -1,0 +1,12 @@
+#ifndef DEMOSOPRO_GLOBAL_H
+#define DEMOSOPRO_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(DEMOSOPRO_LIBRARY)
+#  define DEMOSOPROSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define DEMOSOPROSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // DEMOSOPRO_GLOBAL_H
