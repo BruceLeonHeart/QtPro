@@ -14,7 +14,7 @@ bool MXmlStreamReader::readFile(const QString &fileName)
         return false;
     }
 
-    reader.setDevice(&file);//OpenDRIVE总节点
+    reader.setDevice(&file);//关联IODevice
     reader.readNext();//header节点
     while(!reader.atEnd())
     {
@@ -22,7 +22,7 @@ bool MXmlStreamReader::readFile(const QString &fileName)
         {
             if(reader.name() == "header")
             {
-                readHeaderElement();
+                readHeaderElement(reader);
             }
             else if(reader.name() == "road")
             {
@@ -50,9 +50,9 @@ bool MXmlStreamReader::readFile(const QString &fileName)
     return true;
 }
 
-void MXmlStreamReader::readRoadElement()
+void MXmlStreamReader::readHeaderElement(QXmlStreamReader &reader)
 {
-
+    QXmlStreamAttributes HeaderAttrs = reader.attributes();
 }
 
 

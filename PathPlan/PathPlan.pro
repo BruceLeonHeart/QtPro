@@ -16,11 +16,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         MainWindow.cpp \
     AStar.cpp \
-    MXmlStreamReader.cpp
+    MXmlStreamReader.cpp \
+    OpenDrive.cpp \
+    Road.cpp
 
 HEADERS  += MainWindow.h \
     AStar.h \
-    MXmlStreamReader.h
+    MXmlStreamReader.h \
+    OpenDrive.h \
+    Road.h
 
 FORMS    += MainWindow.ui
 
