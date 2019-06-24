@@ -15,18 +15,41 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         MainWindow.cpp \
-    AStar.cpp \
-    MXmlStreamReader.cpp \
-    OpenDrive.cpp \
-    Road.cpp
+    Cephes/const.cpp \
+    Cephes/fresnl.cpp \
+    OpenDrive/Junction.cpp \
+    OpenDrive/Lane.cpp \
+    OpenDrive/ObjectSignal.cpp \
+    OpenDrive/OpenDrive.cpp \
+    OpenDrive/OpenDriveXmlParser.cpp \
+    OpenDrive/OpenDriveXmlWriter.cpp \
+    OpenDrive/OtherStructures.cpp \
+    OpenDrive/Road.cpp \
+    OpenDrive/RoadGeometry.cpp \
+    TinyXML/tinystr.cpp \
+    TinyXML/tinyxml.cpp \
+    TinyXML/tinyxmlerror.cpp \
+    TinyXML/tinyxmlparser.cpp \
+    Cephes/polevl.c
+    #Algs/AStar.cpp
 
 HEADERS  += MainWindow.h \
-    AStar.h \
-    MXmlStreamReader.h \
-    OpenDrive.h \
-    Road.h
+    Cephes/mconf.h \
+    OpenDrive/Junction.h \
+    OpenDrive/Lane.h \
+    OpenDrive/ObjectSignal.h \
+    OpenDrive/OpenDrive.h \
+    OpenDrive/OpenDriveXmlParser.h \
+    OpenDrive/OpenDriveXmlWriter.h \
+    OpenDrive/OtherStructures.h \
+    OpenDrive/Road.h \
+    OpenDrive/RoadGeometry.h \
+    TinyXML/tinystr.h \
+    TinyXML/tinyxml.h
+    #Algs/AStar.h
 
 FORMS    += MainWindow.ui
 
 DISTFILES += \
-    RealMap20190617 .xml
+    RealMap20190617 .xml \
+    demomap.xml
