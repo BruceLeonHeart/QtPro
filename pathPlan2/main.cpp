@@ -7,8 +7,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
     OpenDriveParser mOpenDriveParser;
-    QString fileName = "/home/pz1_ad_04/qtcreater/pathPlan2/demomap.xml";
-    mOpenDriveParser.xmlStreamReaderFile(fileName);
+    string fileName = "/home/pz1_ad_04/qtcreater/pathPlan2/demomap.xml";
+    mOpenDriveParser.ReadFile(fileName);
     w.show();
 
     return a.exec();

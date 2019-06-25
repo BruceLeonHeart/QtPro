@@ -14,10 +14,18 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         MainWindow.cpp \
-    OpenDrive/OpenDriveParser.cpp
+    OpenDrive/OpenDriveParser.cpp \
+    TinyXML/tinystr.cpp \
+    TinyXML/tinyxml.cpp \
+    TinyXML/tinyxmlerror.cpp \
+    TinyXML/tinyxmlparser.cpp \
+    OpenDrive/OpenDriveStruct.cpp
 
 HEADERS  += MainWindow.h \
-    OpenDrive/OpenDriveParser.h
+    OpenDrive/OpenDriveParser.h \
+    TinyXML/tinystr.h \
+    TinyXML/tinyxml.h \
+    OpenDrive/OpenDriveStruct.h
 
 FORMS    += MainWindow.ui
 
