@@ -2,12 +2,28 @@
 
 OpenDriveParser::OpenDriveParser()
 {
+    mOpenDriveStruct = NULL;
 }
 
 OpenDriveParser::~OpenDriveParser()
 {
 }
 
+RoadNet OpenDriveParser::FindRoadNetById(vector<RoadNet> mRoadNetVector ,int id)
+{
+    int size = mRoadNetVector.size();
+    int k = -1;
+    for(int i=0;i<size;i++)
+    {
+            if (mRoadNetVector.at(i).id == id)
+            {
+                k = i;
+                break;
+            }
+     }
+    return mRoadNetVector.at(k);
+
+};
 
 bool OpenDriveParser::ReadFile(string fileName)
 {
@@ -21,15 +37,17 @@ bool OpenDriveParser::ReadFile(string fileName)
             int checker=TIXML_SUCCESS;
             TiXmlElement *node=rootNode->FirstChildElement("header");
             ReadHeader(node);
-
+            cout<<"Header finished!"<<endl;
             //read roads
             node=rootNode->FirstChildElement("road");
             while (node!=0)
             {
+               //OK
                 ReadRoad(node);
                 node=node->NextSiblingElement("road");
-            }
 
+            }
+            cout<<"Road finished!"<<endl;
             //read controllers
             node=rootNode->FirstChildElement("controller");
             while (node!=0)
@@ -37,15 +55,15 @@ bool OpenDriveParser::ReadFile(string fileName)
                 ReadController(node);
                 node=node->NextSiblingElement("controller");
             }
-
-//            //read junctions
-//            node=rootNode->FirstChildElement("junction");
-//            while (node!=0)
-//            {
-//                ReadJunction(node);
-//                node=node->NextSiblingElement("junction");
-//            }
-
+            cout<<"Controller finished!"<<endl;
+            //read junctions
+            node=rootNode->FirstChildElement("junction");
+            while (node!=0)
+            {
+                ReadJunction(node);
+                node=node->NextSiblingElement("junction");
+            }
+            cout<<"Junction finished!"<<endl;
             return true;
         }
 
@@ -95,15 +113,14 @@ bool OpenDriveParser::ReadRoad (TiXmlElement *node)
     //Read road attributes
     string name;
     double length;
-    string id;
-    string junction;
+    int id;
+    int junction;
 
     int checker=TIXML_SUCCESS;
-
     checker+=node->QueryStringAttribute("name",&name);
     checker+=node->QueryDoubleAttribute("length",&length);
-    checker+=node->QueryStringAttribute("id",&id);
-    checker+=node->QueryStringAttribute("junction",&junction);
+    checker+=node->QueryIntAttribute("id",&id);
+    checker+=node->QueryIntAttribute("junction",&junction);
 
     if (checker!=TIXML_SUCCESS)
     {
@@ -112,7 +129,8 @@ bool OpenDriveParser::ReadRoad (TiXmlElement *node)
     }
     mOpenDriveStruct->AddRoadNet(id,length,junction);
     RoadNet* lastRoadNet = mOpenDriveStruct->GetLastRoadNet();
-
+     cout<<"it's ok5"<<endl;
+    TiXmlElement* subNode;
     //Get links
     subNode=node->FirstChildElement("link");
     if (subNode)
@@ -138,10 +156,10 @@ bool OpenDriveParser::ReadRoad (TiXmlElement *node)
     {
         ReadLateralProfile(lastRoadNet, subNode);
     }
-
     //Proceed to Lanes
     subNode=node->FirstChildElement("lanes");
     ReadLanes(lastRoadNet, subNode);
+
 
     //Proceed to Objects
     subNode=node->FirstChildElement("objects");
@@ -203,16 +221,16 @@ bool OpenDriveParser::ReadRoadLink (RoadNet* mRoadNet, TiXmlElement *node, short
     if (type == 0)
     {
         string elementType;
-        string elementId;
+        int elementId;
         string contactPoint="NA";
 
         int checker=TIXML_SUCCESS;
         checker+=node->QueryStringAttribute("elementType",&elementType);
-        checker+=node->QueryStringAttribute("elementId",&elementId);
-        if (elementType.compare("road")==0)
+        checker+=node->QueryIntAttribute("elementId",&elementId);
+        if (elementType.compare("road")==0)//道路的情形
         {
             checker+=node->QueryStringAttribute("contactPoint",&contactPoint);
-            mRoadNet->left_successor_road_id.push_back(int(id));
+            mRoadNet->left_successor_road_id.push_back(elementId);
             if (contactPoint == "start")
                 mRoadNet->left_successor_road_direction.push_back(-1);
             else
@@ -230,16 +248,16 @@ bool OpenDriveParser::ReadRoadLink (RoadNet* mRoadNet, TiXmlElement *node, short
     else if (type == 1)
     {
         string elementType;
-        string elementId;
+        int elementId;
         string contactPoint="NA";
 
         int checker=TIXML_SUCCESS;
         checker+=node->QueryStringAttribute("elementType",&elementType);
-        checker+=node->QueryStringAttribute("elementId",&elementId);
+        checker+=node->QueryIntAttribute("elementId",&elementId);
         if (elementType.compare("road")==0)
         {
             checker+=node->QueryStringAttribute("contactPoint",&contactPoint);
-            mRoadNet->right_successor_road_id.push_back(int(id));
+            mRoadNet->right_successor_road_id.push_back(elementId);
             if (contactPoint == "start")
                 mRoadNet->right_successor_road_direction.push_back(-1);
             else
@@ -337,7 +355,16 @@ bool OpenDriveParser::ReadGeometryBlock (RoadNet* mRoadNet, TiXmlElement *&node,
         cout<<"Error parsing Geometry attributes"<<endl;
         return false;
     }
-    GeoObj mGeoObj;
+//    double s;
+//    double x;
+//    double y;
+//    double hdg;
+//    double length;
+//    string lineType;
+//    double curvature;
+//    double curvStart;
+//    double curvEnd;
+    GeoObj mGeoObj = {0.0,0.0,0.0,0.0,0.0,"",0.0,0.0,0.0};
     mGeoObj.s = s;
     mGeoObj.x = x;
     mGeoObj.y = y;
@@ -361,8 +388,8 @@ bool OpenDriveParser::ReadGeometryBlock (RoadNet* mRoadNet, TiXmlElement *&node,
             cout<<"Error parsing spiral attributes"<<endl;
             return false;
         }
-        mGeoObj.curvStart = curvStart;
-        mGeoObj.curvEnd = curvEnd;
+        mGeoObj.curvStart = curvatureStart;
+        mGeoObj.curvEnd = curvatureEnd;
         break;
     case 2:		//arc
         checker=TIXML_SUCCESS;
@@ -376,6 +403,7 @@ bool OpenDriveParser::ReadGeometryBlock (RoadNet* mRoadNet, TiXmlElement *&node,
         mGeoObj.curvature = curvature;
         break;
     }
+    mRoadNet->Geos.push_back(mGeoObj);
     return true;
 };
 
@@ -484,19 +512,18 @@ bool OpenDriveParser::ReadLaneSections (RoadNet* mRoadNet, TiXmlElement *node,in
         subNode=subNode->FirstChildElement("lane");
         while(subNode)
         {
-            ReadLane(mRoadNet,mOffsetobj,subNode,1);
+            ReadLane(mRoadNet,&mOffsetobj,subNode,1);
             subNode=subNode->NextSiblingElement("lane");
         }
 
     }
-
     subNode=node->FirstChildElement("center");
     if (subNode)
     {
         subNode=subNode->FirstChildElement("lane");
         while(subNode)
         {
-            ReadLane(mRoadNet,mOffsetobj,subNode,0);
+            ReadLane(mRoadNet,&mOffsetobj,subNode,0);
             subNode=subNode->NextSiblingElement("lane");
         }
     }
@@ -507,7 +534,7 @@ bool OpenDriveParser::ReadLaneSections (RoadNet* mRoadNet, TiXmlElement *node,in
         subNode=subNode->FirstChildElement("lane");
         while(subNode)
         {
-            ReadLane(mRoadNet,mOffsetobj,subNode,-1);
+            ReadLane(mRoadNet,&mOffsetobj,subNode,-1);
             subNode=subNode->NextSiblingElement("lane");
         }
     }
@@ -633,14 +660,19 @@ bool OpenDriveParser::ReadLaneWidth(RoadNet* mRoadNet,offsetObj* mOffsetObj, TiX
     checker+=node->QueryDoubleAttribute("b",&b);
     checker+=node->QueryDoubleAttribute("c",&c);
     checker+=node->QueryDoubleAttribute("d",&d);
-
+    double offset[4] = {a,b,c,d};
     if (checker!=TIXML_SUCCESS)
     {
         cout<<"Error parsing Lane Weight attributes"<<endl;
         return false;
     }
-    mOffsetObj->offset = {a,b,c,d};
-    mRoadNet->Offsets.push_back(mOffsetObj);
+    {
+        mOffsetObj->offset[0] = a;
+        mOffsetObj->offset[1] = b;
+        mOffsetObj->offset[2] = c;
+        mOffsetObj->offset[3] = d;
+        mRoadNet->Offsets.push_back(*mOffsetObj);
+    }
     return true;
 };
 
@@ -792,22 +824,143 @@ bool OpenDriveParser::ReadSurface (RoadNet* mRoadNet, TiXmlElement *node)
 bool OpenDriveParser::ReadController (TiXmlElement *node)
 {	return true;	}
 
-//bool ReadObjects (Road* road, TiXmlElement *node);
-//bool ReadSignals (Road* road, TiXmlElement *node);
 ////--------------
 
-//bool ReadSurface (Road* road, TiXmlElement *node);
-////--------------
+bool OpenDriveParser::ReadJunction (TiXmlElement *node)
+{
+    string name;
+    string id;
 
-//bool ReadController (TiXmlElement *node);
-////--------------
+    int checker=TIXML_SUCCESS;
+    checker+=node->QueryStringAttribute("name",&name);
+    checker+=node->QueryStringAttribute("id",&id);
+    if (checker!=TIXML_SUCCESS)
+    {
+        cout<<"Error parsing Junction attributes"<<endl;
+        return false;
+    }
 
-//bool ReadJunction (TiXmlElement *node);
-//bool ReadJunctionConnection (Junction* junction, TiXmlElement *node);
-//bool ReadJunctionConnectionLaneLink (JunctionConnection* junctionConnection, TiXmlElement *node);
-////--------------
 
-//bool ReadJunctionPriority (Junction* junction, TiXmlElement *node);
-//bool ReadJunctionController (Junction* junction, TiXmlElement *node);
-////--------------
+    //Read connection parameters and add them to the lane if available
+    TiXmlElement *subNode=node->FirstChildElement("connection");
 
+    while (subNode)
+    {
+        ReadJunctionConnection(subNode);
+        subNode=subNode->NextSiblingElement("connection");
+    }
+
+
+    //Read connection parameters and add them to the lane if available
+    subNode=node->FirstChildElement("priority");
+
+    while (subNode)
+    {
+        ReadJunctionPriority(subNode);
+        subNode=subNode->NextSiblingElement("priority");
+    }
+
+
+
+    //Read connection parameters and add them to the lane if available
+    subNode=node->FirstChildElement("controller");
+
+    while (subNode)
+    {
+        ReadJunctionController(subNode);
+        subNode=subNode->NextSiblingElement("controller");
+    }
+
+
+    return true;
+};
+
+bool OpenDriveParser::ReadJunctionConnection (TiXmlElement *node)
+{
+    int id;
+    int incomingRoad;
+    int connectingRoad;
+    string contactPoint;
+
+    int checker=TIXML_SUCCESS;
+    checker+=node->QueryIntAttribute("id",&id);
+    checker+=node->QueryIntAttribute("incomingRoad",&incomingRoad);
+    checker+=node->QueryIntAttribute("connectingRoad",&connectingRoad);
+    checker+=node->QueryStringAttribute("contactPoint",&contactPoint);
+    if (checker!=TIXML_SUCCESS)
+    {
+        cout<<"Error parsing Junction Connection attributes"<<endl;
+        return false;
+    }
+    RoadNet mRoadNet = FindRoadNetById(mOpenDriveStruct->mRoadNetVector,incomingRoad);
+    TiXmlElement *subNode=node->FirstChildElement("laneLink");
+
+    while (subNode)
+    {
+        ReadJunctionConnectionLaneLink(&mRoadNet, subNode, connectingRoad);
+        subNode=subNode->NextSiblingElement("laneLink");
+    }
+
+    return true;
+}
+
+bool OpenDriveParser::ReadJunctionConnectionLaneLink (RoadNet* mRoadNet,TiXmlElement *node,int connectingRoad)
+{
+    int from;
+    int to;
+
+    int checker=TIXML_SUCCESS;
+    checker+=node->QueryIntAttribute("from",&from);
+    checker+=node->QueryIntAttribute("to",&to);
+    if (checker!=TIXML_SUCCESS)
+    {
+        cout<<"Error parsing Junction Lane Link attributes"<<endl;
+        return false;
+    }
+    cout<<mRoadNet->id<<endl;
+    if (from>0)
+    {
+        mRoadNet->left_successor_road_id.push_back(connectingRoad);
+        mRoadNet->left_successor_road_direction.push_back(to);
+    }
+    else
+    {
+        mRoadNet->right_successor_road_id.push_back(connectingRoad);
+        mRoadNet->right_successor_road_direction.push_back(to);
+    }
+
+    return true;
+}
+
+bool OpenDriveParser::ReadJunctionPriority (TiXmlElement *node)
+{
+    string high;
+    string low;
+
+    int checker=TIXML_SUCCESS;
+    checker+=node->QueryStringAttribute("high",&high);
+    checker+=node->QueryStringAttribute("low",&low);
+    if (checker!=TIXML_SUCCESS)
+    {
+        cout<<"Error parsing Junction Priority attributes"<<endl;
+        return false;
+    }
+
+    return true;
+}
+
+bool OpenDriveParser::ReadJunctionController (TiXmlElement *node)
+{
+    string id;
+    string type;
+
+    int checker=TIXML_SUCCESS;
+    checker+=node->QueryStringAttribute("id",&id);
+    checker+=node->QueryStringAttribute("type",&type);
+    if (checker!=TIXML_SUCCESS)
+    {
+        cout<<"Error parsing Junction Controller attributes"<<endl;
+        return false;
+    }
+    return true;
+}

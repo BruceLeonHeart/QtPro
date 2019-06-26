@@ -5,7 +5,8 @@
 #include <vector>
 using std::string;
 using std::vector;
-
+using std::cout;
+using std::endl;
 struct Header{
 
 };
@@ -57,12 +58,12 @@ struct RoadNet{
 
 class OpenDriveStruct
 {
-private:
+public:
     vector<RoadNet> mRoadNetVector;
     Header mHeader;
 public:
     OpenDriveStruct();
-    unsigned int AddRoadNet( string id, double length, string junction);
+    unsigned int AddRoadNet( int id, double length, int junction);
     RoadNet* GetLastRoadNet();
 };
 

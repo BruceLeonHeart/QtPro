@@ -7,14 +7,15 @@ OpenDriveStruct::OpenDriveStruct()
 
 }
 
-unsigned int OpenDriveStruct::AddRoadNet( string id, double length, string junction)
+unsigned int OpenDriveStruct::AddRoadNet( int id, double length, int junction)
 {
     unsigned int index = mRoadNetVector.size();
     RoadNet mRoadNet;
-    mRoadNet.id = int(id);
+    mRoadNet.id = id;
     mRoadNet.length = length;
-    mRoadNet.junction = int(junction);
+    mRoadNet.junction = junction;
     mRoadNetVector.push_back(mRoadNet);
+    cout<<"push OK!"<<endl;
     return index;
 };
 

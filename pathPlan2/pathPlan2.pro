@@ -19,13 +19,15 @@ SOURCES += main.cpp\
     TinyXML/tinyxml.cpp \
     TinyXML/tinyxmlerror.cpp \
     TinyXML/tinyxmlparser.cpp \
-    OpenDrive/OpenDriveStruct.cpp
+    OpenDrive/OpenDriveStruct.cpp \
+    QCustomPlot/qcustomplot.cpp
 
 HEADERS  += MainWindow.h \
     OpenDrive/OpenDriveParser.h \
     TinyXML/tinystr.h \
     TinyXML/tinyxml.h \
-    OpenDrive/OpenDriveStruct.h
+    OpenDrive/OpenDriveStruct.h \
+    QCustomPlot/qcustomplot.h
 
 FORMS    += MainWindow.ui
 

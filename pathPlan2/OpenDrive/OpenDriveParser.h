@@ -15,7 +15,7 @@ using std::endl;
 
 class OpenDriveParser
 {
-private:
+public:
     OpenDriveStruct* mOpenDriveStruct;
 public:
     OpenDriveParser();
@@ -28,6 +28,8 @@ public:
      * The following methods are used to read the data from the XML file and fill in the the OpenDrive structure
      * Methods follow the hierarchical structure and are called automatically when ReadFile is executed
      */
+
+    RoadNet FindRoadNetById(vector<RoadNet> mRoadNetVector ,int id);
     bool ReadHeader (TiXmlElement *node);
 
     bool ReadRoad (TiXmlElement *node);
@@ -58,13 +60,13 @@ public:
         bool ReadController (TiXmlElement *node);
 //        //--------------
 
-//        bool ReadJunction (TiXmlElement *node);
-//        bool ReadJunctionConnection (Junction* junction, TiXmlElement *node);
-//        bool ReadJunctionConnectionLaneLink (JunctionConnection* junctionConnection, TiXmlElement *node);
+        bool ReadJunction (TiXmlElement *node);
+        bool ReadJunctionConnection (TiXmlElement *node);
+        bool ReadJunctionConnectionLaneLink (RoadNet* mRoadNet,TiXmlElement *node,int connectingRoad);
 //        //--------------
 
-//        bool ReadJunctionPriority (Junction* junction, TiXmlElement *node);
-//        bool ReadJunctionController (Junction* junction, TiXmlElement *node);
+        bool ReadJunctionPriority (TiXmlElement *node);
+        bool ReadJunctionController (TiXmlElement *node);
         //--------------
 
 };
