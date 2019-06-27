@@ -1,8 +1,9 @@
-#ifndef OPENDRIVESTRUCT_H
+﻿#ifndef OPENDRIVESTRUCT_H
 #define OPENDRIVESTRUCT_H
 #include <iostream>
 #include <string>
 #include <vector>
+#include "OpenDrive/mathTools.h"
 using std::string;
 using std::vector;
 using std::cout;
@@ -32,6 +33,7 @@ struct offsetObj{
     int id;
     string type;
     double offset[4];
+
 };
 
 
@@ -65,6 +67,10 @@ public:
     OpenDriveStruct();
     unsigned int AddRoadNet( int id, double length, int junction);
     RoadNet* GetLastRoadNet();
+    double* GetXYHdgByS(vector<RoadNet>* mRoadNetVector,int RoadIdx,double s);
+    double* CoorGetFinalLine(GeoObj* mGeo,double length);
+    double* CoorGetFinalArc(GeoObj* mGeo,double length);
+    double* CoorGetFinalSpiral(GeoObj* mGeo,double length);
 };
 
 #endif // OPENDRIVESTRUCT_H

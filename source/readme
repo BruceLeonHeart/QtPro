@@ -1,0 +1,1 @@
+1、获取GPS串口权限：sudo cp 70-ttyusb.rules /etc/udev/rules.d

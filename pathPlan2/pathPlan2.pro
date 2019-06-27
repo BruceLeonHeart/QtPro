@@ -15,19 +15,23 @@ TEMPLATE = app
 SOURCES += main.cpp\
         MainWindow.cpp \
     OpenDrive/OpenDriveParser.cpp \
+    OpenDrive/mathTools.c \
+    Qplot/OpenDrivePlot.cpp \
     TinyXML/tinystr.cpp \
     TinyXML/tinyxml.cpp \
     TinyXML/tinyxmlerror.cpp \
     TinyXML/tinyxmlparser.cpp \
     OpenDrive/OpenDriveStruct.cpp \
-    QCustomPlot/qcustomplot.cpp
+    qcustomplot.cpp
 
 HEADERS  += MainWindow.h \
     OpenDrive/OpenDriveParser.h \
+    OpenDrive/mathTools.h \
+    Qplot/OpenDrivePlot.h \
     TinyXML/tinystr.h \
     TinyXML/tinyxml.h \
     OpenDrive/OpenDriveStruct.h \
-    QCustomPlot/qcustomplot.h
+    qcustomplot.h
 
 FORMS    += MainWindow.ui
 

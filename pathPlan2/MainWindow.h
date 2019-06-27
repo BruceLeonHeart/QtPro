@@ -1,8 +1,9 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "QCustomPlot/qcustomplot.h"
+#include "qcustomplot.h"
+#include<QVector>
 namespace Ui {
 class MainWindow;
 }
@@ -15,8 +16,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public:
+     void plotPointInMap(QCustomPlot* mapView,const QVector<double> x,const QVector<double> y);
 private:
     Ui::MainWindow *ui;
+    QVector<double> x;
+    QVector<double> y;
 };
 
 #endif // MAINWINDOW_H
