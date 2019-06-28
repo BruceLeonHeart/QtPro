@@ -29,9 +29,23 @@ double integral(double hdg,double curvStart,double c,
 
 }
 
-
+//欧氏距离
 double getPointsDis(double x1,double y1,double x2,double y2){
     double delta_x = abs(x1-x2);
     double delta_y = abs(y1-y2);
     return sqrt(delta_x * delta_x + delta_y + delta_y);
+}
+
+//求Offset
+double getOffsetByS(double delta_s,double offset[]){
+
+    return offset[0] + delta_s * offset[1] + delta_s * pow(offset[2],2) + delta_s * pow(offset[3],3);
+}
+
+void linSpace(double x1,double x2,int n,double *y)
+{
+    double d = (x2-x1)/(n-1);
+    for (int i = 0 ; i<n;i++) {
+        y[i] = x1 +i *d;
+    }
 }

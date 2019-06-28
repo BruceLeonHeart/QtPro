@@ -1,4 +1,4 @@
-#include "OpenDriveParser.h"
+﻿#include "OpenDriveParser.h"
 
 OpenDriveParser::OpenDriveParser()
 {
@@ -388,6 +388,7 @@ bool OpenDriveParser::ReadGeometryBlock (RoadNet* mRoadNet, TiXmlElement *&node,
             cout<<"Error parsing spiral attributes"<<endl;
             return false;
         }
+        mGeoObj.lineType = "spiral";
         mGeoObj.curvStart = curvatureStart;
         mGeoObj.curvEnd = curvatureEnd;
         break;
@@ -400,6 +401,7 @@ bool OpenDriveParser::ReadGeometryBlock (RoadNet* mRoadNet, TiXmlElement *&node,
             cout<<"Error parsing arc attributes"<<endl;
             return false;
         }
+        mGeoObj.lineType = "arc";
         mGeoObj.curvature = curvature;
         break;
     }

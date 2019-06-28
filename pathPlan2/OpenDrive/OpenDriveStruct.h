@@ -3,15 +3,31 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cstring>
+
+extern "C"{
 #include "OpenDrive/mathTools.h"
+}
+
 using std::string;
 using std::vector;
 using std::cout;
 using std::endl;
+
+
 struct Header{
 
 };
 
+//指定车道的偏移集合
+struct Idset{
+  int  idx;
+  double s;
+  int id;
+  string type;
+  double offset[4] ={0,0,0,0};
+  double s_end;
+};
 
 //道路几何
 struct GeoObj{
@@ -35,6 +51,7 @@ struct offsetObj{
     double offset[4];
 
 };
+
 
 
 //声明路网结构
@@ -67,10 +84,15 @@ public:
     OpenDriveStruct();
     unsigned int AddRoadNet( int id, double length, int junction);
     RoadNet* GetLastRoadNet();
-    double* GetXYHdgByS(vector<RoadNet>* mRoadNetVector,int RoadIdx,double s);
-    double* CoorGetFinalLine(GeoObj* mGeo,double length);
-    double* CoorGetFinalArc(GeoObj* mGeo,double length);
-    double* CoorGetFinalSpiral(GeoObj* mGeo,double length);
+    void GetXYHdgByS(vector<RoadNet>* mRoadNetVector,int RoadIdx,double s,double* data);
+    void CoorGetFinalLine(GeoObj* mGeo,double length,double* data);
+    void CoorGetFinalArc(GeoObj* mGeo,double length,double* data);
+    void CoorGetFinalSpiral(GeoObj* mGeo,double length,double* data);
+    double  GetSOffset(double s,int id,vector<RoadNet>* mRoadNetVector,int RoadIdx);
+
+    //获取参考线点集
+    void getGeoset();
+
 };
 
 #endif // OPENDRIVESTRUCT_H

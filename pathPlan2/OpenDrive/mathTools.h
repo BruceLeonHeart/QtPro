@@ -11,5 +11,10 @@ double integral(double hdg,double curvStart,double c,
 //两点间欧氏距离
 double getPointsDis(double x1,double y1,double x2,double y2);
 
+//求解三次多项式值
+double getOffsetByS(double delta_s,double offset[]);
+
+//linspace function
+void linSpace(double x1,double x2,int n,double *y);
 
 #endif // MATHTOOLS_H
