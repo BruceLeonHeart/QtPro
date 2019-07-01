@@ -84,7 +84,7 @@ void OpenDriveStruct::CoorGetFinalArc(GeoObj* mGeo,double length,double* data)
 {
    double c = 0.0;
    double down = 0.0;
-   long N = 10000;
+   long N = 100000;
    int xFlag =0,yFlag = 1;
    double dx = integral(mGeo->hdg,mGeo->curvature,c,down,length,N,xFlag);
    double dy = integral(mGeo->hdg,mGeo->curvature,c,down,length,N,yFlag);
@@ -100,7 +100,7 @@ void OpenDriveStruct::CoorGetFinalSpiral(GeoObj* mGeo,double length,double* data
 {
     double c = (mGeo->curvEnd - mGeo->curvStart)/mGeo->length;
     double down = 0.0;
-    long N = 10000;
+    long N = 100000;
     int xFlag =0,yFlag = 1;
     double dx = integral(mGeo->hdg,mGeo->curvStart,c,down,length,N,xFlag);
     double dy = integral(mGeo->hdg,mGeo->curvStart,c,down,length,N,yFlag);
@@ -123,12 +123,14 @@ double  OpenDriveStruct::GetSOffset(double s,int id,vector<RoadNet>* mRoadNetVec
     Idset tempIdset;
     for (int i = 0;i<mOffset.size();i++) {
         if (mOffset.at(i).id == id)
+        {
             tempIdset.idx = mOffset.at(i).s;
             tempIdset.s = mOffset.at(i).s;
             tempIdset.id = mOffset.at(i).id;
             tempIdset.type = mOffset.at(i).type;
             memcpy(tempIdset.offset,mOffset.at(i).offset,sizeof(mOffset.at(i).offset));
             mIdSet.push_back(tempIdset);
+        }
     }
     int mIdSetlength = mIdSet.size();
     if (mIdSetlength == 1)

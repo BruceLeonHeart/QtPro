@@ -36,4 +36,5 @@ HEADERS  += MainWindow.h \
 FORMS    += MainWindow.ui
 
 DISTFILES += \
+    RealMap2.xml \
     demomap.xml

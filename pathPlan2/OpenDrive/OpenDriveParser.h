@@ -1,4 +1,4 @@
-#ifndef OPENDRIVEPARSER_H
+﻿#ifndef OPENDRIVEPARSER_H
 #define OPENDRIVEPARSER_H
 #include <vector>
 #include <string>
@@ -42,9 +42,9 @@ public:
     bool ReadLateralProfile (RoadNet* mRoadNet, TiXmlElement *node);
     bool ReadLanes (RoadNet* mRoadNet, TiXmlElement *node);
         bool ReadLaneSections (RoadNet* mRoadNet, TiXmlElement *node,int idx);
-        bool ReadLane (RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlElement *node, short int laneType);
+        bool ReadLane (RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlElement *node,double s_start, short int laneType);
 
-        bool ReadLaneWidth(RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlElement *node);
+        bool ReadLaneWidth(RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlElement *node,double s_start);
         bool ReadLaneRoadMark(RoadNet* mRoadNet, TiXmlElement *node);
         bool ReadLaneMaterial(RoadNet* mRoadNet, TiXmlElement *node);
         bool ReadLaneVisibility(RoadNet* mRoadNet, TiXmlElement *node);

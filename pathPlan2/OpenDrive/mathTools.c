@@ -39,7 +39,7 @@ double getPointsDis(double x1,double y1,double x2,double y2){
 //求Offset
 double getOffsetByS(double delta_s,double offset[]){
 
-    return offset[0] + delta_s * offset[1] + delta_s * pow(offset[2],2) + delta_s * pow(offset[3],3);
+    return offset[0] + offset[1] * delta_s   + offset[2] * pow(delta_s,2) + offset[3] * pow(delta_s,3);
 }
 
 void linSpace(double x1,double x2,int n,double *y)
@@ -48,4 +48,15 @@ void linSpace(double x1,double x2,int n,double *y)
     for (int i = 0 ; i<n;i++) {
         y[i] = x1 +i *d;
     }
+}
+
+int sign(double x1)
+{
+    if (x1 > 0.0)
+        return 1;
+    else if (x1 < 0.0)
+        return -1;
+    else
+        return 0;
+
 }

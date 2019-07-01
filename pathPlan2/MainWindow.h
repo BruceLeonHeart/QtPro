@@ -9,6 +9,9 @@
 extern "C"{
 #include"OpenDrive/mathTools.h"
 }
+#include<set>
+using std::set;
+
 namespace Ui {
 class MainWindow;
 }
@@ -28,7 +31,7 @@ public:
      //打印参考线
      void plotGeo(QCustomPlot* mapView,GeoObj* mObj,vector<RoadNet>* mRoadNetVector,int RoadIdx);
      //打印车道线
-     void plotLane();
+     void plotLane(QCustomPlot* mapView,vector<RoadNet>* mRoadNetVector,int RoadIdx,int GeoId,int id);
 private:
     Ui::MainWindow *ui;
     OpenDriveStruct mOpenDriveStruct;

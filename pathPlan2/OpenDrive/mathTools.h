@@ -17,4 +17,6 @@ double getOffsetByS(double delta_s,double offset[]);
 //linspace function
 void linSpace(double x1,double x2,int n,double *y);
 
+//sign
+int sign(double x1);
 #endif // MATHTOOLS_H

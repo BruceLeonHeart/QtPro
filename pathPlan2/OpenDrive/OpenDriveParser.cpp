@@ -501,7 +501,6 @@ bool OpenDriveParser::ReadLaneSections (RoadNet* mRoadNet, TiXmlElement *node,in
     double s;
     checker+=node->QueryDoubleAttribute("s",&s);
     mOffsetobj.idx = idx;
-    mOffsetobj.s = s;
     if (checker!=TIXML_SUCCESS)
     {
         cout<<"Error parsing Lane Section attributes"<<endl;
@@ -514,7 +513,7 @@ bool OpenDriveParser::ReadLaneSections (RoadNet* mRoadNet, TiXmlElement *node,in
         subNode=subNode->FirstChildElement("lane");
         while(subNode)
         {
-            ReadLane(mRoadNet,&mOffsetobj,subNode,1);
+            ReadLane(mRoadNet,&mOffsetobj,subNode,s,1);
             subNode=subNode->NextSiblingElement("lane");
         }
 
@@ -525,7 +524,7 @@ bool OpenDriveParser::ReadLaneSections (RoadNet* mRoadNet, TiXmlElement *node,in
         subNode=subNode->FirstChildElement("lane");
         while(subNode)
         {
-            ReadLane(mRoadNet,&mOffsetobj,subNode,0);
+            ReadLane(mRoadNet,&mOffsetobj,subNode,s,0);
             subNode=subNode->NextSiblingElement("lane");
         }
     }
@@ -536,14 +535,14 @@ bool OpenDriveParser::ReadLaneSections (RoadNet* mRoadNet, TiXmlElement *node,in
         subNode=subNode->FirstChildElement("lane");
         while(subNode)
         {
-            ReadLane(mRoadNet,&mOffsetobj,subNode,-1);
+            ReadLane(mRoadNet,&mOffsetobj,subNode,s,-1);
             subNode=subNode->NextSiblingElement("lane");
         }
     }
     return true;
 };
 
-bool OpenDriveParser::ReadLane (RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlElement *node, short int laneType)
+bool OpenDriveParser::ReadLane (RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlElement *node,double s_start, short int laneType)
 {
     //Read Lane attributes
     short int side=laneType;//作为保留，暂未使用
@@ -598,7 +597,7 @@ bool OpenDriveParser::ReadLane (RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlEl
     subNode=node->FirstChildElement("width");
     while (subNode)
     {
-        ReadLaneWidth(mRoadNet,mOffsetObj, subNode);
+        ReadLaneWidth(mRoadNet,mOffsetObj, subNode,s_start);
         subNode=subNode->NextSiblingElement("width");
     }
 
@@ -653,7 +652,7 @@ bool OpenDriveParser::ReadLane (RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlEl
     return true;
 };
 
-bool OpenDriveParser::ReadLaneWidth(RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlElement *node)
+bool OpenDriveParser::ReadLaneWidth(RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlElement *node,double s_start)
 {
     double sOffset, a, b, c, d;
     int checker=TIXML_SUCCESS;
@@ -669,6 +668,7 @@ bool OpenDriveParser::ReadLaneWidth(RoadNet* mRoadNet,offsetObj* mOffsetObj, TiX
         return false;
     }
     {
+        mOffsetObj->s = s_start + sOffset;
         mOffsetObj->offset[0] = a;
         mOffsetObj->offset[1] = b;
         mOffsetObj->offset[2] = c;
