@@ -3,6 +3,9 @@
 #include<QTimer>
 #include<QPen>
 
+#include <iostream>
+#include <fstream>
+using std::ofstream;
 #define M_PI 3.14159265358979323846
 QTimer *Display_timer;
 
@@ -12,13 +15,31 @@ MainWindow::MainWindow(QWidget *parent) :
 {
      ui->setupUi(this);
      mOpenDriveParser.mOpenDriveStruct = &mOpenDriveStruct;
-     //string fileName = "/home/pz1_ad_04/qtcreater/pathPlan2/demomap.xml";
-     string fileName = "/home/pz1_ad_04/qtcreater/pathPlan2/RealMap2.xml";
+
+     string fileName = "/home/pz1_ad_04/qtcreater/pathPlan2/demomap.xml";
+     //string fileName = "/home/pz1_ad_04/qtcreater/pathPlan2/RealMap2.xml";
      mOpenDriveParser.ReadFile(fileName);
      vector<RoadNet>* tmp = &mOpenDriveStruct.mRoadNetVector;
      ui->mapView->axisRect()->setupFullAxesBox(true);
      ui->mapView->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
      plotMap(ui->mapView,tmp);
+
+
+     mAStarRoute.mOpenDriveStruct = &mOpenDriveStruct;
+     Point start = mAStarRoute.pointBelong(tmp,1000,250);
+     Point end = mAStarRoute.pointBelong(tmp,1000,400);
+     mAStarRoute.AStarMain(&start,&end,tmp);//执行算法后路径内容进行了填充
+     vector<double> x_set;
+     vector<double> y_set;
+     mAStarRoute.getDataSet(&mAStarRoute.mPath,&start,&end,tmp,&x_set,&y_set);
+     char path[64] = "/home/pz1_ad_04/桌面/2.txt";
+     ofstream fout(path);
+     assert(x_set.size() == y_set.size());
+     for (int i = 0; i <x_set.size(); i++)
+     {
+      fout <<x_set.at(i)<<","<<y_set.at(i)<< endl; // 使用与cout同样的方式进行写入
+     }
+
 
 
 

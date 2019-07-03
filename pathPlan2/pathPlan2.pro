@@ -13,6 +13,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
+    Algorithm/AStarRoute.cpp \
         MainWindow.cpp \
     OpenDrive/OpenDriveParser.cpp \
     OpenDrive/mathTools.c \
@@ -25,6 +26,7 @@ SOURCES += main.cpp\
     qcustomplot.cpp
 
 HEADERS  += MainWindow.h \
+    Algorithm/AStarRoute.h \
     OpenDrive/OpenDriveParser.h \
     OpenDrive/mathTools.h \
     Qplot/OpenDrivePlot.h \

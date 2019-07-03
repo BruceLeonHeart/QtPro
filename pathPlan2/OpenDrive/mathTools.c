@@ -31,8 +31,8 @@ double integral(double hdg,double curvStart,double c,
 
 //欧氏距离
 double getPointsDis(double x1,double y1,double x2,double y2){
-    double delta_x = abs(x1-x2);
-    double delta_y = abs(y1-y2);
+    double delta_x = fabs(x1-x2);
+    double delta_y = fabs(y1-y2);
     return sqrt(delta_x * delta_x + delta_y + delta_y);
 }
 
@@ -59,4 +59,29 @@ int sign(double x1)
     else
         return 0;
 
+}
+
+void getCrossMsg(double x_start,double y_start,double hdg,double pointX,double pointY,double* result)
+{
+    double A,B,C;
+    if (fabs(cos(hdg))<1e-15)
+    {
+        A = 1;
+        B = 0;
+        C = -x_start;
+    }
+    else {
+        A = -tan(hdg);
+        B = 1;
+        C = tan(hdg) * x_start - y_start;
+    }
+    result[0] = (A*pointX + B*pointY + C)/sqrt(A*A + B*B);
+    result[1] = (B*B*pointX - A*B*pointY - A*C)/(A*A + B*B);
+    result[2] = (-B*A*pointX + A*A*pointY - B*C)/(A*A + B*B);
+}
+
+int sideJudge(double x1,double y1,double x2,double y2,double x3,double y3)
+{
+    double s = ((x1-x3)*(y2-y3)-(y1-y3)*(x2-x3))/2;
+    return sign(s);
 }

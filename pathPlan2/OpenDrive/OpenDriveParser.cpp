@@ -9,21 +9,21 @@ OpenDriveParser::~OpenDriveParser()
 {
 }
 
-RoadNet OpenDriveParser::FindRoadNetById(vector<RoadNet> mRoadNetVector ,int id)
+void OpenDriveParser::appendMessages()
 {
-    int size = mRoadNetVector.size();
-    int k = -1;
-    for(int i=0;i<size;i++)
-    {
-            if (mRoadNetVector.at(i).id == id)
-            {
-                k = i;
-                break;
-            }
-     }
-    return mRoadNetVector.at(k);
+    //获取路网对象
+    vector<RoadNet>* mRoadNetVector = &mOpenDriveStruct->mRoadNetVector;
+    for (unsigned long i = 0; i< mRoadNetVector->size();i++) {
+            RoadNet* crtRoadNet = &mRoadNetVector->at(i);
+            crtRoadNet->start_x = crtRoadNet->Geos.at(0).x;
+            crtRoadNet->start_y = crtRoadNet->Geos.at(0).y;
+            double data[3] ={0.0};
+            mOpenDriveStruct->GetXYHdgByS(mRoadNetVector,i,crtRoadNet->length,data);
+            crtRoadNet->end_x = data[0];
+            crtRoadNet->end_y = data[1];
+    }
+}
 
-};
 
 bool OpenDriveParser::ReadFile(string fileName)
 {
@@ -64,6 +64,8 @@ bool OpenDriveParser::ReadFile(string fileName)
                 node=node->NextSiblingElement("junction");
             }
             cout<<"Junction finished!"<<endl;
+
+            appendMessages();
             return true;
         }
 
@@ -894,12 +896,12 @@ bool OpenDriveParser::ReadJunctionConnection (TiXmlElement *node)
         cout<<"Error parsing Junction Connection attributes"<<endl;
         return false;
     }
-    RoadNet mRoadNet = FindRoadNetById(mOpenDriveStruct->mRoadNetVector,incomingRoad);
+    RoadNet* mRoadNet = mOpenDriveStruct->FindRoadNetById(incomingRoad);
     TiXmlElement *subNode=node->FirstChildElement("laneLink");
 
     while (subNode)
     {
-        ReadJunctionConnectionLaneLink(&mRoadNet, subNode, connectingRoad);
+        ReadJunctionConnectionLaneLink(mRoadNet, subNode, connectingRoad);
         subNode=subNode->NextSiblingElement("laneLink");
     }
 

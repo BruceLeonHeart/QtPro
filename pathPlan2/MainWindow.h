@@ -6,6 +6,7 @@
 #include<QVector>
 #include <OpenDrive/OpenDriveParser.h>
 #include <OpenDrive/OpenDriveStruct.h>
+#include <Algorithm/AStarRoute.h>
 extern "C"{
 #include"OpenDrive/mathTools.h"
 }
@@ -36,6 +37,7 @@ private:
     Ui::MainWindow *ui;
     OpenDriveStruct mOpenDriveStruct;
     OpenDriveParser mOpenDriveParser;
+    AStarRoute mAStarRoute;
     QVector<double> x;
     QVector<double> y;
 };

@@ -28,8 +28,8 @@ public:
      * The following methods are used to read the data from the XML file and fill in the the OpenDrive structure
      * Methods follow the hierarchical structure and are called automatically when ReadFile is executed
      */
-
-    RoadNet FindRoadNetById(vector<RoadNet> mRoadNetVector ,int id);
+    //追加路网信息
+    void appendMessages();
     bool ReadHeader (TiXmlElement *node);
 
     bool ReadRoad (TiXmlElement *node);

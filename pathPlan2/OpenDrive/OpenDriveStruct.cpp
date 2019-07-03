@@ -10,7 +10,7 @@ OpenDriveStruct::OpenDriveStruct()
 unsigned int OpenDriveStruct::AddRoadNet( int id, double length, int junction)
 {
     unsigned int index = mRoadNetVector.size();
-    RoadNet mRoadNet;
+    RoadNet mRoadNet ={};
     mRoadNet.id = id;
     mRoadNet.length = length;
     mRoadNet.junction = junction;
@@ -29,7 +29,8 @@ RoadNet* OpenDriveStruct::GetLastRoadNet()
 
 void OpenDriveStruct::GetXYHdgByS(vector<RoadNet>* mRoadNetVector,int RoadIdx,double s,double * data)
 {
-    vector<GeoObj>*  currentGeos = currentGeos = &(mRoadNetVector->at(RoadIdx).Geos);
+
+    vector<GeoObj>* currentGeos = &(mRoadNetVector->at(RoadIdx).Geos);
 
     int GeosLength = currentGeos->size();
     int idx = GeosLength-1;
@@ -155,4 +156,19 @@ double  OpenDriveStruct::GetSOffset(double s,int id,vector<RoadNet>* mRoadNetVec
 
     double delta_s = s - mIdSet.at(crtId).s;
     return getOffsetByS(delta_s,mIdSet.at(crtId).offset);
+}
+
+RoadNet* OpenDriveStruct::FindRoadNetById(int id)
+{
+    int size = mRoadNetVector.size();
+    int k = -1;
+    for(int i=0;i<size;i++)
+    {
+            if (mRoadNetVector.at(i).id == id)
+            {
+                k = i;
+                break;
+            }
+     }
+    return &mRoadNetVector.at(k);
 }

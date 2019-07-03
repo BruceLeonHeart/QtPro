@@ -84,6 +84,7 @@ public:
     OpenDriveStruct();
     unsigned int AddRoadNet( int id, double length, int junction);
     RoadNet* GetLastRoadNet();
+    RoadNet* FindRoadNetById(int id);
     void GetXYHdgByS(vector<RoadNet>* mRoadNetVector,int RoadIdx,double s,double* data);
     void CoorGetFinalLine(GeoObj* mGeo,double length,double* data);
     void CoorGetFinalArc(GeoObj* mGeo,double length,double* data);
