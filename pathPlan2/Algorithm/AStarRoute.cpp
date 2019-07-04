@@ -268,6 +268,7 @@ Node* AStarRoute::getOriginMsg(int id, int direction, vector<Node> *openList)
 
 void AStarRoute::getDataSet(vector<PathNode> *mPath, Point *start, Point *end, vector<RoadNet> *mRoadNetVector,vector<double>* xSet,vector<double>* ySet)
 {
+
     unsigned long mPathLength = mPath->size();
     double start_s = 0.0;
     double end_s = 0.0;
@@ -282,9 +283,11 @@ void AStarRoute::getDataSet(vector<PathNode> *mPath, Point *start, Point *end, v
 
     for (unsigned long i =0;i<mPathLength;i++) {
         int direction = sign(mPath->at(i).direction);
-        RoadNet* crtRoad = getRoadNetById(mRoadNetVector->at(i).id,mRoadNetVector);
+        RoadNet* crtRoad = getRoadNetById(mPath->at(i).id,mRoadNetVector);
         vector<GeoObj> Geos = crtRoad->Geos;
         double RoadGeoEnd = Geos.at(Geos.size()-1).s + Geos.at(Geos.size()-1).length;
+        vector<double> xTmp;
+        vector<double> yTmp;
         //起始段
         if(i == mPathLength -1)
         {
@@ -293,7 +296,9 @@ void AStarRoute::getDataSet(vector<PathNode> *mPath, Point *start, Point *end, v
                  end_s = RoadGeoEnd;
              else
                  end_s = 0;
-             getDatapathCommon(mPath->at(i).id,mPath->at(i).direction,start_s,end_s,mRoadNetVector,xSet,ySet);
+             getDatapathCommon(mPath->at(i).id,mPath->at(i).direction,start_s,end_s,mRoadNetVector,&xTmp,&yTmp);
+             xSet->insert(xSet->begin(),xTmp.begin(),xTmp.end());
+             ySet->insert(ySet->begin(),yTmp.begin(),yTmp.end());
         }
 
         //终止段
@@ -304,7 +309,9 @@ void AStarRoute::getDataSet(vector<PathNode> *mPath, Point *start, Point *end, v
                 start_s = 0;
             else
                 start_s = RoadGeoEnd;
-            getDatapathCommon(mPath->at(i).id,mPath->at(i).direction,start_s,end_s,mRoadNetVector,xSet,ySet);
+            getDatapathCommon(mPath->at(i).id,mPath->at(i).direction,start_s,end_s,mRoadNetVector,&xTmp,&yTmp);
+            xSet->insert(xSet->end(),xTmp.begin(),xTmp.end());
+            ySet->insert(ySet->end(),yTmp.begin(),yTmp.end());
         }
         else {
             if(direction == -1)
@@ -318,7 +325,9 @@ void AStarRoute::getDataSet(vector<PathNode> *mPath, Point *start, Point *end, v
                 start_s = RoadGeoEnd;
                 end_s = 0;
             }
-            getDatapathCommon(mPath->at(i).id,mPath->at(i).direction,start_s,end_s,mRoadNetVector,xSet,ySet);
+            getDatapathCommon(mPath->at(i).id,mPath->at(i).direction,start_s,end_s,mRoadNetVector,&xTmp,&yTmp);
+            xSet->insert(xSet->begin(),xTmp.begin(),xTmp.end());
+            ySet->insert(ySet->begin(),yTmp.begin(),yTmp.end());
         }
 
     }
@@ -328,7 +337,7 @@ void AStarRoute::getDataSet(vector<PathNode> *mPath, Point *start, Point *end, v
 void AStarRoute::getDatapathCommon(int id, int direction, double start_s, double end_s, vector<RoadNet> *mRoadNetVector,vector<double>* xSet,vector<double>* ySet)
 {
     double delta_s = 1.0;
-    int N = floor((end_s - start_s) / delta_s);
+    int N = floor(fabs((end_s - start_s) / delta_s));
     double sValueSet[N];
     for (int i = 0; i<N; i++) {
         sValueSet[i] = start_s + i*(-direction)*delta_s;
@@ -336,6 +345,7 @@ void AStarRoute::getDatapathCommon(int id, int direction, double start_s, double
 
         int size = mRoadNetVector->size();
         int k = -1;
+
         for(int j=0;j<size;j++)
         {
                 if (mRoadNetVector->at(j).id == id)
@@ -356,7 +366,6 @@ void AStarRoute::getDatapathCommon(int id, int direction, double start_s, double
         xSet->push_back(x);
         ySet->push_back(y);
     }
-
 }
 
 Point AStarRoute::pointBelong(vector<RoadNet> *mRoadNetVector, double xp, double yp)
