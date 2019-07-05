@@ -5,10 +5,11 @@
 #-------------------------------------------------
 
 QT       += core gui
-
+QT  +=  printsupport
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = pathPlan3
+
+TARGET = pathPlan4
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -25,11 +26,27 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        Path_Plan/AStarRoute/AStarRoute.cpp \
+        Path_Plan/OpenDrive/OpenDriveParser.cpp \
+        Path_Plan/OpenDrive/OpenDriveStruct.cpp \
+        Path_Plan/TinyXML/tinystr.cpp \
+        Path_Plan/TinyXML/tinyxml.cpp \
+        Path_Plan/TinyXML/tinyxmlerror.cpp \
+        Path_Plan/TinyXML/tinyxmlparser.cpp \
+        Path_Plan/Utils/mathUtils.c \
         main.cpp \
-        MainWindow.cpp
+        MainWindow.cpp \
+        qcustomplot.cpp
 
 HEADERS += \
-        MainWindow.h
+        MainWindow.h \
+        Path_Plan/AStarRoute/AStarRoute.h \
+        Path_Plan/OpenDrive/OpenDriveParser.h \
+        Path_Plan/OpenDrive/OpenDriveStruct.h \
+        Path_Plan/TinyXML/tinystr.h \
+        Path_Plan/TinyXML/tinyxml.h \
+        Path_Plan/Utils/mathUtils.h \
+        qcustomplot.h
 
 FORMS += \
         MainWindow.ui
@@ -38,3 +55,7 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    RealMap2.xml \
+    demomap.xml

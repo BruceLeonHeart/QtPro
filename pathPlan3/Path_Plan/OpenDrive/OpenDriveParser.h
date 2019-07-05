@@ -11,8 +11,6 @@ using std::string;
 using std::cout;
 using std::endl;
 
-
-
 class OpenDriveParser
 {
 public:
@@ -23,15 +21,9 @@ public:
 public:
     bool ReadFile(string fileName);
 
-
-    /**
-     * The following methods are used to read the data from the XML file and fill in the the OpenDrive structure
-     * Methods follow the hierarchical structure and are called automatically when ReadFile is executed
-     */
     //追加路网信息
     void appendMessages();
     bool ReadHeader (TiXmlElement *node);
-
     bool ReadRoad (TiXmlElement *node);
     bool ReadRoadLinks (RoadNet* mRoadNet, TiXmlElement *node);
     bool ReadRoadLink (RoadNet* mRoadNet, TiXmlElement *node, short int type);
@@ -41,34 +33,32 @@ public:
     bool ReadElevationProfile (RoadNet* mRoadNet, TiXmlElement *node);
     bool ReadLateralProfile (RoadNet* mRoadNet, TiXmlElement *node);
     bool ReadLanes (RoadNet* mRoadNet, TiXmlElement *node);
-        bool ReadLaneSections (RoadNet* mRoadNet, TiXmlElement *node,int idx);
-        bool ReadLane (RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlElement *node,double s_start, short int laneType);
-
-        bool ReadLaneWidth(RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlElement *node,double s_start);
-        bool ReadLaneRoadMark(RoadNet* mRoadNet, TiXmlElement *node);
-        bool ReadLaneMaterial(RoadNet* mRoadNet, TiXmlElement *node);
-        bool ReadLaneVisibility(RoadNet* mRoadNet, TiXmlElement *node);
-        bool ReadLaneSpeed(RoadNet* mRoadNet, TiXmlElement *node);
-        bool ReadLaneAccess(RoadNet* mRoadNet, TiXmlElement *node);
-        bool ReadLaneHeight(RoadNet* mRoadNet, TiXmlElement *node);
+    bool ReadLaneSections (RoadNet* mRoadNet, TiXmlElement *node,int idx);
+    bool ReadLane (RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlElement *node,double s_start, short int laneType);
+    bool ReadLaneWidth(RoadNet* mRoadNet,offsetObj* mOffsetObj, TiXmlElement *node,double s_start);
+    bool ReadLaneRoadMark(RoadNet* mRoadNet, TiXmlElement *node);
+    bool ReadLaneMaterial(RoadNet* mRoadNet, TiXmlElement *node);
+    bool ReadLaneVisibility(RoadNet* mRoadNet, TiXmlElement *node);
+    bool ReadLaneSpeed(RoadNet* mRoadNet, TiXmlElement *node);
+    bool ReadLaneAccess(RoadNet* mRoadNet, TiXmlElement *node);
+    bool ReadLaneHeight(RoadNet* mRoadNet, TiXmlElement *node);
 //        //--------------
 
-        bool ReadObjects (RoadNet* mRoadNet, TiXmlElement *node);
-        bool ReadSignals (RoadNet* mRoadNet, TiXmlElement *node);
-        bool ReadSurface (RoadNet* mRoadNet, TiXmlElement *node);
+    bool ReadObjects (RoadNet* mRoadNet, TiXmlElement *node);
+    bool ReadSignals (RoadNet* mRoadNet, TiXmlElement *node);
+    bool ReadSurface (RoadNet* mRoadNet, TiXmlElement *node);
 //        //--------------
-        bool ReadController (TiXmlElement *node);
-//        //--------------
-
-        bool ReadJunction (TiXmlElement *node);
-        bool ReadJunctionConnection (TiXmlElement *node);
-        bool ReadJunctionConnectionLaneLink (RoadNet* mRoadNet,TiXmlElement *node,int connectingRoad);
+    bool ReadController (TiXmlElement *node);
 //        //--------------
 
-        bool ReadJunctionPriority (TiXmlElement *node);
-        bool ReadJunctionController (TiXmlElement *node);
+    bool ReadJunction (TiXmlElement *node);
+    bool ReadJunctionConnection (TiXmlElement *node);
+    bool ReadJunctionConnectionLaneLink (RoadNet* mRoadNet,TiXmlElement *node,int connectingRoad);
+//        //--------------
+
+    bool ReadJunctionPriority (TiXmlElement *node);
+    bool ReadJunctionController (TiXmlElement *node);
         //--------------
-
 };
 
 #endif // OPENDRIVEPARSER_H

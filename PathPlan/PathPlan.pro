@@ -15,38 +15,36 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         MainWindow.cpp \
-    Cephes/const.cpp \
-    Cephes/fresnl.cpp \
-    OpenDrive/Junction.cpp \
-    OpenDrive/Lane.cpp \
-    OpenDrive/ObjectSignal.cpp \
-    OpenDrive/OpenDrive.cpp \
-    OpenDrive/OpenDriveXmlParser.cpp \
-    OpenDrive/OpenDriveXmlWriter.cpp \
-    OpenDrive/OtherStructures.cpp \
-    OpenDrive/Road.cpp \
-    OpenDrive/RoadGeometry.cpp \
-    TinyXML/tinystr.cpp \
-    TinyXML/tinyxml.cpp \
-    TinyXML/tinyxmlerror.cpp \
-    TinyXML/tinyxmlparser.cpp \
-    Cephes/polevl.c
-    #Algs/AStar.cpp
+#    Path_Plan/Cephes/const.cpp \
+    Path_Plan/Cephes/fresnl.cpp \
+    Path_Plan/Cephes/polevl.c \
+    Path_Plan/OpenDrive/Junction.cpp \
+    Path_Plan/OpenDrive/Lane.cpp \
+    Path_Plan/OpenDrive/ObjectSignal.cpp \
+    Path_Plan/OpenDrive/OpenDrive.cpp \
+    Path_Plan/OpenDrive/OpenDriveXmlParser.cpp \
+    Path_Plan/OpenDrive/OpenDriveXmlWriter.cpp \
+    Path_Plan/OpenDrive/OtherStructures.cpp \
+    Path_Plan/OpenDrive/Road.cpp \
+    Path_Plan/OpenDrive/RoadGeometry.cpp \
+    Path_Plan/TinyXML/tinystr.cpp \
+    Path_Plan/TinyXML/tinyxml.cpp \
+    Path_Plan/TinyXML/tinyxmlerror.cpp \
+    Path_Plan/TinyXML/tinyxmlparser.cpp
 
 HEADERS  += MainWindow.h \
-    Cephes/mconf.h \
-    OpenDrive/Junction.h \
-    OpenDrive/Lane.h \
-    OpenDrive/ObjectSignal.h \
-    OpenDrive/OpenDrive.h \
-    OpenDrive/OpenDriveXmlParser.h \
-    OpenDrive/OpenDriveXmlWriter.h \
-    OpenDrive/OtherStructures.h \
-    OpenDrive/Road.h \
-    OpenDrive/RoadGeometry.h \
-    TinyXML/tinystr.h \
-    TinyXML/tinyxml.h
-    #Algs/AStar.h
+    Path_Plan/Cephes/mconf.h \
+    Path_Plan/OpenDrive/Junction.h \
+    Path_Plan/OpenDrive/Lane.h \
+    Path_Plan/OpenDrive/ObjectSignal.h \
+    Path_Plan/OpenDrive/OpenDrive.h \
+    Path_Plan/OpenDrive/OpenDriveXmlParser.h \
+    Path_Plan/OpenDrive/OpenDriveXmlWriter.h \
+    Path_Plan/OpenDrive/OtherStructures.h \
+    Path_Plan/OpenDrive/Road.h \
+    Path_Plan/OpenDrive/RoadGeometry.h \
+    Path_Plan/TinyXML/tinystr.h \
+    Path_Plan/TinyXML/tinyxml.h
 
 FORMS    += MainWindow.ui
 

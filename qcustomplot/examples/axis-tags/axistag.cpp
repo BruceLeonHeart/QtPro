@@ -1,4 +1,4 @@
-/***************************************************************************
+﻿/***************************************************************************
 **                                                                        **
 **  QCustomPlot, an easy to use, modern plotting widget for Qt            **
 **  Copyright (C) 2011-2018 Emanuel Eichhammer                            **
@@ -32,7 +32,7 @@ AxisTag::AxisTag(QCPAxis *parentAxis) :
   // The dummy tracer serves here as an invisible anchor which always sticks to the right side of
   // the axis rect
   mDummyTracer = new QCPItemTracer(mAxis->parentPlot());
-  mDummyTracer->setVisible(false);
+  mDummyTracer->setVisible(false);//设置为true后会出现横线实时追踪当前值
   mDummyTracer->position->setTypeX(QCPItemPosition::ptAxisRectRatio);
   mDummyTracer->position->setTypeY(QCPItemPosition::ptPlotCoords);
   mDummyTracer->position->setAxisRect(mAxis->axisRect());
@@ -44,13 +44,13 @@ AxisTag::AxisTag(QCPAxis *parentAxis) :
   // offset for the tag of the second y axis is achieved. This horizontal offset gets dynamically
   // updated in AxisTag::updatePosition. the arrow "start" is simply set to have the "end" as parent
   // anchor. It is given a horizontal offset to the right, which results in a 15 pixel long arrow.
-  mArrow = new QCPItemLine(mAxis->parentPlot());
-  mArrow->setLayer("overlay");
+  mArrow = new QCPItemLine(mAxis->parentPlot());//线段
+  mArrow->setLayer("overlay");//置于顶层
   mArrow->setClipToAxisRect(false);
-  mArrow->setHead(QCPLineEnding::esSpikeArrow);
-  mArrow->end->setParentAnchor(mDummyTracer->position);
-  mArrow->start->setParentAnchor(mArrow->end);
-  mArrow->start->setCoords(15, 0);
+  mArrow->setHead(QCPLineEnding::esSpikeArrow);//设置首部形状（箭头）
+  mArrow->end->setParentAnchor(mDummyTracer->position);//结束点为Tracer的位置
+  mArrow->start->setParentAnchor(mArrow->end);//起点和结束点位置保持一致
+  mArrow->start->setCoords(15, 0);//起点向右偏移15像素
   
   // The text label is anchored at the arrow start (tail) and has its "position" aligned at the
   // left, and vertically centered to the text label box.
@@ -59,9 +59,9 @@ AxisTag::AxisTag(QCPAxis *parentAxis) :
   mLabel->setClipToAxisRect(false);
   mLabel->setPadding(QMargins(3, 0, 3, 0));
   mLabel->setBrush(QBrush(Qt::white));
-  mLabel->setPen(QPen(Qt::blue));
+  mLabel->setPen(QPen(Qt::red));
   mLabel->setPositionAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-  mLabel->position->setParentAnchor(mArrow->start);
+  mLabel->position->setParentAnchor(mArrow->start);//标签放置的地方在箭头的起始位置
 }
 
 AxisTag::~AxisTag()

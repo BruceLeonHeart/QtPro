@@ -1,4 +1,4 @@
-#ifndef STUDENT_H
+﻿#ifndef STUDENT_H
 #define STUDENT_H
 #include<iostream>
 using std::endl;
@@ -8,9 +8,10 @@ using std::string;
 
 class Student
 {
-private:
+public:
     string name;
     int age;
+    double h;
 public:
     Student();
     void show();

@@ -1,4 +1,4 @@
-/***************************************************************************
+﻿/***************************************************************************
 **                                                                        **
 **  QCustomPlot, an easy to use, modern plotting widget for Qt            **
 **  Copyright (C) 2011-2018 Emanuel Eichhammer                            **
@@ -33,7 +33,7 @@ class AxisTag : public QObject
 {
   Q_OBJECT
 public:
-  explicit AxisTag(QCPAxis *parentAxis);
+  explicit AxisTag(QCPAxis *parentAxis);//explicit 防止直接对其属性进行赋值
   virtual ~AxisTag();
   
   // setters:

@@ -1,8 +1,9 @@
-#ifndef ROADGEOMETRY_H
+﻿#ifndef ROADGEOMETRY_H
 #define ROADGEOMETRY_H
 
 #include <vector>
 #include <string>
+
 
 //Prototypes
 class RoadGeometry;

@@ -1,4 +1,4 @@
-#include "OpenDriveXmlParser.h"
+﻿#include "OpenDriveXmlParser.h"
 #include <iostream>
 #include <algorithm>
 
@@ -277,15 +277,19 @@ bool OpenDriveXmlParser::ReadPlanView(Road* road, TiXmlElement *node)
 		subNodeType=subNode->FirstChildElement();
 		if (subNodeType->ValueStr().compare("line")==0)
 		{
-			ReadGeometryBlock(road, subNode,0);		//load a straight block
+            ReadGeometryBlock(road, subNode,0);		//load a straight block
 		}
 		else if (subNodeType->ValueStr().compare("spiral")==0)
 		{
-			ReadGeometryBlock(road, subNode,1);		//load a turn block
-		}
+            ReadGeometryBlock(road, subNode,1);		//load a turn block
+        }
+        else if (subNodeType->ValueStr().compare("arc")==0)
+        {
+            ReadGeometryBlock(road, subNode,2);		//arc
+        }
 		else if (subNodeType->ValueStr().compare("poly3")==0)
 		{
-			ReadGeometryBlock(road, subNode,2);		//load a polynom spline block
+            ReadGeometryBlock(road, subNode,3);		//load a polynom spline block
 		}
 			
 
@@ -307,12 +311,11 @@ bool OpenDriveXmlParser::ReadGeometryBlock (Road* road, TiXmlElement *&node, sho
 		break;
 	case 1:
 		ReadGeometry(geomBlock, node, 1);
-		node=node->NextSiblingElement("geometry");
-		ReadGeometry(geomBlock, node, 2);
-		node=node->NextSiblingElement("geometry");
-		ReadGeometry(geomBlock, node, 1);
+        break;
+    case 2:
+        ReadGeometry(geomBlock, node, 2);
 		break;
-	case 2:
+    case 3:
 		ReadGeometry(geomBlock, node, 3);
 		break;
 	}

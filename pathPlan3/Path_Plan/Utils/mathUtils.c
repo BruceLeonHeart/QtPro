@@ -1,4 +1,4 @@
-﻿#include "mathTools.h"
+﻿#include "mathUtils.h"
 //左矩形法求定积分
 double integral(double hdg,double curvStart,double c,
                 double down,double up,long int N,int flag){

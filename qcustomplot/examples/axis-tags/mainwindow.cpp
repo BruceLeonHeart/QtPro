@@ -1,4 +1,4 @@
-/***************************************************************************
+﻿/***************************************************************************
 **                                                                        **
 **  QCustomPlot, an easy to use, modern plotting widget for Qt            **
 **  Copyright (C) 2011-2018 Emanuel Eichhammer                            **
@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
   mTag2->setPen(mGraph2->pen());
   
   connect(&mDataTimer, SIGNAL(timeout()), this, SLOT(timerSlot()));
-  mDataTimer.start(40);
+  mDataTimer.start(400);
 }
 
 MainWindow::~MainWindow()

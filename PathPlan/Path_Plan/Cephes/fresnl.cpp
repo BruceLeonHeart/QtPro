@@ -1,4 +1,4 @@
-/*							fresnl.c
+﻿/*							fresnl.c
  *
  *	Fresnel integral
  *

@@ -102,7 +102,6 @@ public://点集相关
     void getDataSet(vector<PathNode>* mPath,Point* start,Point* end,vector<RoadNet>* mRoadNetVector,vector<double>* xSet,vector<double>* ySet);
     //指定路段获取点集
     void getDatapathCommon(int id,int direction,double start_s,double end_s,vector<RoadNet>* mRoadNetVector,vector<double>* xSet,vector<double>* ySet);
-
 };
 
 #endif // ASTARROUTE_H

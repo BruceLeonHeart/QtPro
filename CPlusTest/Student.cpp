@@ -1,4 +1,4 @@
-#include "Student.h"
+﻿#include "Student.h"
 
 Student::Student()
 {
@@ -9,4 +9,5 @@ Student::Student()
 void Student::show()
 {
     cout<<age<<","<<name<<endl;
+    cout<<"h is:"<<h<<endl;
 }

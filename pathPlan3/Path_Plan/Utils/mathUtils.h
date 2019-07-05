@@ -1,5 +1,5 @@
-﻿#ifndef MATHTOOLS_H
-#define MATHTOOLS_H
+﻿#ifndef MATHUTILS_H
+#define MATHUTILS_H
 #include<math.h>
 
 //https://blog.csdn.net/qdlovecsj/article/details/10075847
@@ -35,4 +35,4 @@ void getCrossMsg(double x_start,double y_start,double hdg,double Point_x,double 
 int sideJudge(double x1,double y1,double x2,double y2,double x3,double y3);
 
 
-#endif // MATHTOOLS_H
+#endif // MATHUTILS_H
