@@ -65,6 +65,7 @@ public:
     QGroupBox *groupBox_4;
     QPushButton *Pure_Pursuit_Start_Button;
     QCustomPlot *plot;
+    QPushButton *pushButton;
     QStatusBar *statusBar;
     QToolBar *mainToolBar;
     QMenuBar *menuBar;
@@ -74,7 +75,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(1273, 505);
+        MainWindow->resize(1351, 659);
         MainWindow->setSizeIncrement(QSize(0, 0));
         MainWindow->setBaseSize(QSize(100, 129));
         MainWindow->setCursor(QCursor(Qt::UpArrowCursor));
@@ -252,6 +253,9 @@ public:
         plot = new QCustomPlot(centralWidget);
         plot->setObjectName(QString::fromUtf8("plot"));
         plot->setGeometry(QRect(770, 20, 471, 361));
+        pushButton = new QPushButton(centralWidget);
+        pushButton->setObjectName(QString::fromUtf8("pushButton"));
+        pushButton->setGeometry(QRect(510, 490, 89, 25));
         MainWindow->setCentralWidget(centralWidget);
         groupBox_3->raise();
         groupBox->raise();
@@ -265,16 +269,16 @@ public:
         GPS_Start->raise();
         groupBox_4->raise();
         plot->raise();
+        pushButton->raise();
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QString::fromUtf8("statusBar"));
         MainWindow->setStatusBar(statusBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
         MainWindow->addToolBar(Qt::TopToolBarArea, mainToolBar);
-        MainWindow->insertToolBarBreak(mainToolBar);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1273, 28));
+        menuBar->setGeometry(QRect(0, 0, 1351, 28));
         menu = new QMenu(menuBar);
         menu->setObjectName(QString::fromUtf8("menu"));
         MainWindow->setMenuBar(menuBar);
@@ -336,6 +340,7 @@ public:
         Read_GPS_Data->setText(QApplication::translate("MainWindow", "\350\257\273\345\217\226GPS\346\225\260\346\215\256", nullptr));
         groupBox_4->setTitle(QApplication::translate("MainWindow", "\347\256\227\346\263\225", nullptr));
         Pure_Pursuit_Start_Button->setText(QApplication::translate("MainWindow", "\345\274\200\345\220\257Pure_Pursite", nullptr));
+        pushButton->setText(QApplication::translate("MainWindow", "PushButton", nullptr));
         menu->setTitle(QApplication::translate("MainWindow", "\346\226\207\344\273\266", nullptr));
     } // retranslateUi
 

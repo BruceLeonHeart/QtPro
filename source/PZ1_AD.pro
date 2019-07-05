@@ -32,17 +32,35 @@ SOURCES += \
         GPS_Driver/packet_example.c \
         GPS_Driver/rs232/rs232.c \
         GPS_Driver/spatial_packets.c \
+        Path_Plan/AStarRoute/AStarRoute.cpp \
+        Path_Plan/OpenDrive/OpenDriveParser.cpp \
+        Path_Plan/OpenDrive/OpenDriveStruct.cpp \
+        Path_Plan/TinyXML/tinystr.cpp \
+        Path_Plan/TinyXML/tinyxml.cpp \
+        Path_Plan/TinyXML/tinyxmlerror.cpp \
+        Path_Plan/TinyXML/tinyxmlparser.cpp \
+        Path_Plan/Utils/mathUtils.c \
         Pure_Pursuit_Contorl/Pure_Pursuit.cpp \
+        UI/CustomPlot.cpp \
         main.cpp \
         mainwindow.cpp \
         qcustomplot.cpp
 
+
 HEADERS += \
         CAN_Driver/ICANCmd.h \
         GPS_Driver/an_packet_protocol.h \
+        GPS_Driver/packet_example.h \
         GPS_Driver/rs232/rs232.h \
         GPS_Driver/spatial_packets.h \
+        Path_Plan/AStarRoute/AStarRoute.h \
+        Path_Plan/OpenDrive/OpenDriveParser.h \
+        Path_Plan/OpenDrive/OpenDriveStruct.h \
+        Path_Plan/TinyXML/tinystr.h \
+        Path_Plan/TinyXML/tinyxml.h \
+        Path_Plan/Utils/mathUtils.h \
         Pure_Pursuit_Contorl/Pure_Pursuit.h \
+        UI/CustomPlot.h \
         mainwindow.h \
         qcustomplot.h
 
@@ -61,3 +79,6 @@ DEPENDPATH += $$PWD/.
 
 RESOURCES += \
     resources.qrc
+
+DISTFILES += \
+    RealMap2.xml

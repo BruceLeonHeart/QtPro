@@ -1,50 +1,7 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <pthread.h>
-#include <getopt.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <sys/time.h>
-#include <sys/select.h>
-#include <time.h>//定时器
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <signal.h>
-#include "CAN_Driver/ICANCmd.h"//CAN
-#include "Pure_Pursuit_Contorl/Pure_Pursuit.h"
-#include <QMessageBox>
-#include <QtCore>
-#include <QSlider>//滑槽
-//串口
-#include <GPS_Driver/spatial_packets.h>
-#include <QtSerialPort/QSerialPortInfo>
-#include <QtSerialPort/QSerialPort>
-//保存txt
-#include <QtCore/QCoreApplication>
-#include <QFile>
-#include <QString>
-#include <QPainter>
-#include <QOpenGLWidget>
-#include "QOpenGLFunctions"
-#include <QMouseEvent>
-#include <QDebug>
-#include <QWheelEvent>
-#include <QVector>
 
 using namespace std;
-
-QTimer *Rec_timer;
-QTimer *Send_timer;
-QTimer *Display_timer;
-QTimer *GPS_timer;
-QTimer *Pure_Pursuit_timer;
 extern Msg_Send SendMsg;
 extern Msg_Rec RecMsg;
 extern system_state_packet_t system_state_packet;
@@ -60,36 +17,58 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    mOpenDriveParser.mOpenDriveStruct = &mOpenDriveStruct;
+
+    string fileName = "/home/pz1_ad_04/qtcreater/source/RealMap2.xml";
+    //string fileName = "/home/pz1_ad_04/qtcreater/pathPlan3/RealMap2.xml";
+    mOpenDriveParser.ReadFile(fileName);
+
+//    ui->plot->axisRect()->setupFullAxesBox(true);
+//    ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+
 
     //100ms刷新页面
     Display_timer = new QTimer(this);
     connect(Display_timer,SIGNAL(timeout()),this,SLOT(Display_timerUpDate()));
     Display_timer->start(100);
     //第三方绘图初始化
-    //目标点
+    //地图绘制
     ui->plot->addGraph();
-    ui->plot->graph(0)->setPen(QPen(Qt::blue));
+    ui->plot->graph(0)->setPen(QPen(Qt::black));
     ui->plot->graph(0)->setBrush(QBrush(QColor(0, 0, 255, 20)));
-    ui->plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    //ui->plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     ui->plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
     ui->plot->graph(0)->rescaleAxes();
-    //实时GPS点转笛卡尔坐标
+    //目标点
     ui->plot->addGraph();
-    ui->plot->graph(1)->setPen(QPen(Qt::red));
+    ui->plot->graph(1)->setPen(QPen(Qt::blue));
     ui->plot->graph(1)->setBrush(QBrush(QColor(0, 0, 255, 20)));
     ui->plot->graph(1)->setLineStyle(QCPGraph::lsNone);
     ui->plot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
     ui->plot->graph(1)->rescaleAxes();
-    //行驶轨迹轨迹
+    //实时GPS点转笛卡尔坐标
     ui->plot->addGraph();
-    ui->plot->graph(2)->setPen(QPen(Qt::green));
+    ui->plot->graph(2)->setPen(QPen(Qt::red));
     ui->plot->graph(2)->setBrush(QBrush(QColor(0, 0, 255, 20)));
     ui->plot->graph(2)->setLineStyle(QCPGraph::lsNone);
     ui->plot->graph(2)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
     ui->plot->graph(2)->rescaleAxes();
+    //行驶轨迹轨迹
+    ui->plot->addGraph();
+    ui->plot->graph(3)->setPen(QPen(Qt::green));
+    ui->plot->graph(3)->setBrush(QBrush(QColor(0, 0, 255, 20)));
+    ui->plot->graph(3)->setLineStyle(QCPGraph::lsNone);
+    ui->plot->graph(3)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
+    ui->plot->graph(3)->rescaleAxes();
 
     ui->plot->axisRect()->setupFullAxesBox(true);
     ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    ui->plot->xAxis->setRange(-400,100);
+    ui->plot->yAxis->setRange(-150,50);
+
+
+
+
 }
 
 
@@ -183,7 +162,6 @@ void MainWindow::Display_timerUpDate()
 
     // The following plot setup is mostly taken from the plot demos:
 
-
     static QVector<double> x_GPS, y_GPS;
     const double longitude_orig = 113.171198359442;
     const double latitude_orig = 23.384265425953;
@@ -193,7 +171,7 @@ void MainWindow::Display_timerUpDate()
     //打印GPS实时轨迹
     x_GPS.prepend((system_state_packet.longitude * RADIANS_TO_DEGREES - longitude_orig) * longitude_step);
     y_GPS.prepend((system_state_packet.latitude * RADIANS_TO_DEGREES - latitude_orig) * latitude_step);
-    ui->plot->graph(1)->setData(x_GPS, y_GPS);
+    ui->plot->graph(2)->setData(x_GPS, y_GPS);
     if(x_GPS.size()>100 || y_GPS.size()>100 )
     {
         x_GPS.remove(100,1);
@@ -399,7 +377,7 @@ void MainWindow::on_Read_GPS_Data_clicked()
             msg.push_back(msgcolumn);
             msgcolumn.clear();
         }
-        ui->plot->graph(2)->setData(targetx, targety); //打印
+        ui->plot->graph(3)->setData(targetx, targety); //打印
         csvFile.close();
         QMessageBox::warning(this, QObject::tr("成功"), QObject::tr("读取完成"), QMessageBox::Ok);
     }
@@ -419,7 +397,7 @@ void MainWindow::on_Pure_Pursuit_Start_Button_clicked(bool checked)
       Target_route();
       //打印目标点
       QVector<double> x, y;
-      ui->plot->graph(0)->setData(x.fromStdVector(target_x), y.fromStdVector(target_y));
+      ui->plot->graph(1)->setData(x.fromStdVector(target_x), y.fromStdVector(target_y));
       //开启Pur_pursuit
       ui->Pure_Pursuit_Start_Button->setStyleSheet("background-color: rgb(78, 154, 6);");
       ui->Pure_Pursuit_Start_Button->setText(QObject::tr("停止Pure_Pursite"));
@@ -440,4 +418,116 @@ void MainWindow::on_Pure_Pursuit_Start_Button_clicked(bool checked)
 void MainWindow::Pure_Pursuit_timer_timerUpDate()
 {
    Pure_Pursuit_main();
+}
+
+void MainWindow::plotMap(QCustomPlot* mapView,vector<RoadNet>* mRoadNetVector){
+    int RoadNetNum = mRoadNetVector->size();
+    int i;
+    for(i=0;i<RoadNetNum;i++){
+        vector<GeoObj>* mGeos;
+        mGeos = &mRoadNetVector->at(i).Geos;
+        int mGeoslength = mGeos->size();
+        double RoadGeoEnd = mGeos->at(mGeoslength-1).s + mGeos->at(mGeoslength-1).length;
+        //打印参考线
+        for(int j =0;j<mGeoslength;j++){
+            plotGeo(mapView,&mGeos->at(j),mRoadNetVector,i);
+        }
+        //打印车道线
+        vector<offsetObj>* mOffsets;
+        mOffsets = &mRoadNetVector->at(i).Offsets;
+        //统计需要显示的车道，并剔除重复元素，这里使用set
+        set<int> laneId;
+        int mOffsetsLength = mOffsets->size();
+        for (int m=0;m<mOffsetsLength;m++) {
+            string s1 = mOffsets->at(m).type;
+            string s2 = "driving";
+            if (s1.compare(s2) == 0)
+                laneId.insert(mOffsets->at(m).id);
+        }
+
+        for (int n=0;n<mGeoslength;n++) {
+            for(set<int>::iterator it = laneId.begin(); it != laneId.end(); it++){
+                plotLane(mapView,mRoadNetVector,i,n,*it);
+            }
+
+        }
+
+
+    }
+
+
+}
+
+//打印参考线
+void  MainWindow::plotGeo(QCustomPlot* mapView,GeoObj* mObj,vector<RoadNet>* mRoadNetVector,int RoadIdx){
+    double delta_s = 0.5;
+    int N = floor(mObj->length/delta_s);
+    QVector<double> X;
+    QVector<double> Y;
+    double sValueset[N];
+    double data[3]={0} ;
+    for (int var = 0; var < N; ++var) {
+        sValueset[var] = mObj->s + delta_s *var;
+        mOpenDriveStruct.GetXYHdgByS(mRoadNetVector,RoadIdx,sValueset[var], data);
+        double x = data[0];
+        double y = data[1];
+        //double hdg = data[2];
+        X.append(x);
+        Y.append(y);
+    }
+    plotPointInMap(mapView,X,Y);
+
+
+}
+
+//打印车道线
+ void MainWindow::plotLane(QCustomPlot* mapView,vector<RoadNet>* mRoadNetVector,int RoadIdx,int GeoId,int id)
+ {
+     double delta_s =0.5;
+     int N = floor(mRoadNetVector->at(RoadIdx).Geos.at(GeoId).length/delta_s);
+     QVector<double> X;
+     QVector<double> Y;
+
+     double sValueset[N];
+     double data[3]={0} ;
+
+     for (int var = 0; var < N; ++var) {
+         sValueset[var] = mRoadNetVector->at(RoadIdx).Geos.at(GeoId).s + delta_s *var;
+         mOpenDriveStruct.GetXYHdgByS(mRoadNetVector,RoadIdx,sValueset[var], data);
+         double x = data[0];
+         double y = data[1];
+         double hdg = data[2];
+         double offset = mOpenDriveStruct.GetSOffset(sValueset[var],id,mRoadNetVector,RoadIdx);
+         x = x + offset*cos(hdg + sign(id)*M_PI/2);
+         y = y + offset*sin(hdg + sign(id)*M_PI/2);
+         X.append(x);
+         Y.append(y);
+     }
+    plotPointInMap(mapView,X,Y);
+ }
+
+
+void MainWindow::plotPointInMap(QCustomPlot* mapView,const QVector<double> x,const QVector<double> y)
+{
+    //设置画笔
+//    QPen pen;
+//    pen.setColor(Qt::blue);
+//    //add Gragh
+//    QCPGraph* currentGragh = NULL;
+//    currentGragh = mapView->addGraph();
+//    currentGragh->setPen(pen);
+//    currentGragh->rescaleAxes(true);//自动调整轴上值的范围
+//    currentGragh->setData(x,y);//设置数据
+
+//    ui->plot->graph(0)->setData(x,y);
+    ui->plot->graph(0)->addData(x,y);
+    ui->plot->replot();
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+        vector<RoadNet>* tmp = &mOpenDriveStruct.mRoadNetVector;
+        plotMap(ui->plot,tmp);
+        QSharedPointer<QCPGraphDataContainer> a =   ui->plot->graph(0)->data();
+        cout<<"Heoolo"<<endl;
 }

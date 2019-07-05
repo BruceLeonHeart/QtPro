@@ -1,10 +1,52 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QComboBox>
 #include <QMouseEvent>
-
+#include <set>
+#include "qcustomplot.h"
+#include "Path_Plan/OpenDrive/OpenDriveParser.h"
+#include "Path_Plan/OpenDrive/OpenDriveStruct.h"
+#include "Path_Plan/AStarRoute/AStarRoute.h"
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <pthread.h>
+#include <getopt.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/time.h>
+#include <sys/select.h>
+#include <time.h>//定时器
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <signal.h>
+#include "CAN_Driver/ICANCmd.h"//CAN
+#include "Pure_Pursuit_Contorl/Pure_Pursuit.h"
+#include <QMessageBox>
+#include <QtCore>
+#include <QSlider>//滑槽
+//串口
+#include <GPS_Driver/spatial_packets.h>
+#include <QtSerialPort/QSerialPortInfo>
+#include <QtSerialPort/QSerialPort>
+//保存txt
+#include <QtCore/QCoreApplication>
+#include <QFile>
+#include <QString>
+#include <QPainter>
+#include <QOpenGLWidget>
+#include "QOpenGLFunctions"
+#include <QMouseEvent>
+#include <QDebug>
+#include <QWheelEvent>
+#include <QVector>
+using std::set;
 
 
 namespace Ui {
@@ -51,8 +93,30 @@ private slots:
 
     void on_Read_GPS_Data_clicked();
 
+    void on_pushButton_clicked();
+
+public: //OpenDrive
+    void plotPointInMap(QCustomPlot* mapView,const QVector<double> x,const QVector<double> y);
+    //打印地图
+    void plotMap(QCustomPlot* mapView,vector<RoadNet>* mRoadNetVector);
+    //打印参考线
+    void plotGeo(QCustomPlot* mapView,GeoObj* mObj,vector<RoadNet>* mRoadNetVector,int RoadIdx);
+    //打印车道线
+    void plotLane(QCustomPlot* mapView,vector<RoadNet>* mRoadNetVector,int RoadIdx,int GeoId,int id);
+private://OpenDrive
+    OpenDriveStruct mOpenDriveStruct;
+    OpenDriveParser mOpenDriveParser;
+    AStarRoute mAStarRoute;
+    QVector<double> x;
+    QVector<double> y;
 public:
     Ui::MainWindow *ui;
+private: //定时器
+    QTimer *Rec_timer; //CAN定时接受
+    QTimer *Send_timer; //CAN定时发送
+    QTimer *Display_timer; //打印图层刷新
+    QTimer *GPS_timer; //GPS信息定时接受
+    QTimer *Pure_Pursuit_timer; //PID算法迭代时间
 };
 
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1273</width>
-    <height>505</height>
+    <width>1351</width>
+    <height>659</height>
    </rect>
   </property>
   <property name="sizeIncrement">
@@ -592,6 +592,19 @@
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>490</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
+   </widget>
    <zorder>groupBox_3</zorder>
    <zorder>groupBox</zorder>
    <zorder>groupBox_2</zorder>
@@ -604,6 +617,7 @@
    <zorder>GPS_Start</zorder>
    <zorder>groupBox_4</zorder>
    <zorder>plot</zorder>
+   <zorder>pushButton</zorder>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="mainToolBar">
@@ -611,7 +625,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -619,7 +633,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1273</width>
+     <width>1351</width>
      <height>28</height>
     </rect>
    </property>
