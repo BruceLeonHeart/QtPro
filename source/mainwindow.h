@@ -6,9 +6,8 @@
 #include <QMouseEvent>
 #include <set>
 #include "qcustomplot.h"
-#include "Path_Plan/OpenDrive/OpenDriveParser.h"
-#include "Path_Plan/OpenDrive/OpenDriveStruct.h"
-#include "Path_Plan/AStarRoute/AStarRoute.h"
+
+#include "UI/CustomPlot.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -96,21 +95,11 @@ private slots:
     void on_pushButton_clicked();
 
 public: //OpenDrive
-    void plotPointInMap(QCustomPlot* mapView,const QVector<double> x,const QVector<double> y);
-    //打印地图
-    void plotMap(QCustomPlot* mapView,vector<RoadNet>* mRoadNetVector);
-    //打印参考线
-    void plotGeo(QCustomPlot* mapView,GeoObj* mObj,vector<RoadNet>* mRoadNetVector,int RoadIdx);
-    //打印车道线
-    void plotLane(QCustomPlot* mapView,vector<RoadNet>* mRoadNetVector,int RoadIdx,int GeoId,int id);
-private://OpenDrive
-    OpenDriveStruct mOpenDriveStruct;
-    OpenDriveParser mOpenDriveParser;
-    AStarRoute mAStarRoute;
-    QVector<double> x;
-    QVector<double> y;
+
+
 public:
     Ui::MainWindow *ui;
+    CustomPlot* mCustomPlot;
 private: //定时器
     QTimer *Rec_timer; //CAN定时接受
     QTimer *Send_timer; //CAN定时发送
@@ -118,6 +107,5 @@ private: //定时器
     QTimer *GPS_timer; //GPS信息定时接受
     QTimer *Pure_Pursuit_timer; //PID算法迭代时间
 };
-
 
 #endif // MAINWINDOW_H
