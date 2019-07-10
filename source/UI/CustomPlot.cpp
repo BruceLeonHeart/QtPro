@@ -1,12 +1,8 @@
 ﻿#include "CustomPlot.h"
 
-CustomPlot::CustomPlot(QCustomPlot* qCustomPlot)
+CustomPlot::CustomPlot()
 {
-    plot = qCustomPlot;
-    mOpenDriveParser.mOpenDriveStruct = &mOpenDriveStruct;
-    string fileName = "/home/pz1_ad_04/qtcreater/source/RealMap2.xml";
-    //string fileName = "/home/pz1_ad_04/qtcreater/pathPlan3/RealMap2.xml";
-    mOpenDriveParser.ReadFile(fileName);
+
 }
 
 CustomPlot::~CustomPlot(){
@@ -59,13 +55,12 @@ void CustomPlot::initPlot()
 }
 
 void CustomPlot::plotMap(){
-    QCustomPlot* mapView = plot;
-    vector<RoadNet>* mRoadNetVector = &mOpenDriveStruct.mRoadNetVector;
-    int RoadNetNum = mRoadNetVector->size();
+    vector<RoadNet> mRoadNetVector = mAStarRoute.mOpenDriveParser.mOpenDriveStruct.mRoadNetVector;
+    int RoadNetNum = mRoadNetVector.size();
     int i;
     for(i=0;i<RoadNetNum;i++){
         vector<GeoObj>* mGeos;
-        mGeos = &mRoadNetVector->at(i).Geos;
+        mGeos = &mRoadNetVector.at(i).Geos;
         int mGeoslength = mGeos->size();
         double RoadGeoEnd = mGeos->at(mGeoslength-1).s + mGeos->at(mGeoslength-1).length;
         //打印参考线
@@ -74,7 +69,7 @@ void CustomPlot::plotMap(){
         }
         //打印车道线
         vector<offsetObj>* mOffsets;
-        mOffsets = &mRoadNetVector->at(i).Offsets;
+        mOffsets = &mRoadNetVector.at(i).Offsets;
         //统计需要显示的车道，并剔除重复元素，这里使用set
         set<int> laneId;
         int mOffsetsLength = mOffsets->size();
@@ -101,7 +96,7 @@ void CustomPlot::plotMap(){
 //打印参考线
 void  CustomPlot::plotGeo(GeoObj* mObj,int RoadIdx){
     QCustomPlot* mapView = plot;
-    vector<RoadNet>* mRoadNetVector = &mOpenDriveStruct.mRoadNetVector;
+    vector<RoadNet> mRoadNetVector = mAStarRoute.mOpenDriveParser.mOpenDriveStruct.mRoadNetVector;
     double delta_s = 0.5;
     int N = floor(mObj->length/delta_s);
     QVector<double> X;
@@ -110,7 +105,7 @@ void  CustomPlot::plotGeo(GeoObj* mObj,int RoadIdx){
     double data[3]={0} ;
     for (int var = 0; var < N; ++var) {
         sValueset[var] = mObj->s + delta_s *var;
-        mOpenDriveStruct.GetXYHdgByS(mRoadNetVector,RoadIdx,sValueset[var], data);
+        mAStarRoute.mOpenDriveParser.mOpenDriveStruct.GetXYHdgByS(RoadIdx,sValueset[var], data);
         double x = data[0];
         double y = data[1];
         //double hdg = data[2];
@@ -126,9 +121,9 @@ void  CustomPlot::plotGeo(GeoObj* mObj,int RoadIdx){
  void CustomPlot::plotLane(int RoadIdx,int GeoId,int id)
  {
      QCustomPlot* mapView = plot;
-     vector<RoadNet>* mRoadNetVector = &mOpenDriveStruct.mRoadNetVector;
+     vector<RoadNet> mRoadNetVector = mAStarRoute.mOpenDriveParser.mOpenDriveStruct.mRoadNetVector;
      double delta_s =0.5;
-     int N = floor(mRoadNetVector->at(RoadIdx).Geos.at(GeoId).length/delta_s);
+     int N = floor(mRoadNetVector.at(RoadIdx).Geos.at(GeoId).length/delta_s);
      QVector<double> X;
      QVector<double> Y;
 
@@ -136,12 +131,12 @@ void  CustomPlot::plotGeo(GeoObj* mObj,int RoadIdx){
      double data[3]={0} ;
 
      for (int var = 0; var < N; ++var) {
-         sValueset[var] = mRoadNetVector->at(RoadIdx).Geos.at(GeoId).s + delta_s *var;
-         mOpenDriveStruct.GetXYHdgByS(mRoadNetVector,RoadIdx,sValueset[var], data);
+         sValueset[var] = mRoadNetVector.at(RoadIdx).Geos.at(GeoId).s + delta_s *var;
+         mAStarRoute.mOpenDriveParser.mOpenDriveStruct.GetXYHdgByS(RoadIdx,sValueset[var], data);
          double x = data[0];
          double y = data[1];
          double hdg = data[2];
-         double offset = mOpenDriveStruct.GetSOffset(sValueset[var],id,mRoadNetVector,RoadIdx);
+         double offset = mAStarRoute.mOpenDriveParser.mOpenDriveStruct.GetSOffset(sValueset[var],id,RoadIdx);
          x = x + offset*cos(hdg + sign(id)*M_PI/2);
          y = y + offset*sin(hdg + sign(id)*M_PI/2);
          X.append(x);

@@ -2,32 +2,36 @@
 
 AStarRoute::AStarRoute()
 {
-    mOpenDriveStruct = NULL;
+     string fileName = "/home/pz1_ad_04/qtcreater/source/RealMap2.xml";
+   // string fileName = "/home/pz1_ad_04/qtcreater/source/demomap.xml";
+    mOpenDriveParser.ReadFile(fileName);
 }
 
-double AStarRoute::getGCost(Node* current,PathNode* neighbor,vector<RoadNet>* mRoadNetVector){
-    unsigned long mRoadNetLength = mRoadNetVector->size();
+double AStarRoute::getGCost(Node* current,PathNode* neighbor){
+    vector<RoadNet> mRoadNetVector = mOpenDriveParser.mOpenDriveStruct.mRoadNetVector;
+    unsigned long mRoadNetLength = mRoadNetVector.size();
     double neighborLength= 0.0;
     for (unsigned long i = 0; i < mRoadNetLength; i++) {
-        if(mRoadNetVector->at(i).id == neighbor->id)
+        if(mRoadNetVector.at(i).id == neighbor->id)
         {
-            neighborLength = mRoadNetVector->at(i).length;
+            neighborLength = mRoadNetVector.at(i).length;
             break;
         }
     }
     return current->gCost + neighborLength;
 }
 
-double AStarRoute::getHCost(Point* endPoint,PathNode* neighbor,vector<RoadNet>* mRoadNetVector)
+double AStarRoute::getHCost(Point* endPoint,PathNode* neighbor)
 {
+    vector<RoadNet> mRoadNetVector = mOpenDriveParser.mOpenDriveStruct.mRoadNetVector;
     double endx = 0.0;
     double endy = 0.0;
     RoadNet* currentRoadNet = NULL;
-    unsigned long mRoadNetLength = mRoadNetVector->size();
+    unsigned long mRoadNetLength = mRoadNetVector.size();
     for (unsigned long i = 0; i < mRoadNetLength; i++) {
-        if(mRoadNetVector->at(i).id == neighbor->id)
+        if(mRoadNetVector.at(i).id == neighbor->id)
         {
-            currentRoadNet = &mRoadNetVector->at(i);
+            currentRoadNet = &mRoadNetVector.at(i);
             break;
         }
     }
@@ -51,12 +55,12 @@ double AStarRoute::getFCost(Node* node)
     return node->gCost + node->hCost;
 }
 
-void AStarRoute::AStarMain(Point* start,Point* end,vector<RoadNet>* mRoadNetVector)
+void AStarRoute::AStarMain(Point* start,Point* end)
 {
     //如果终点落在起点与第一个要去的点中间，则直接返回
     //包含两种情况：roadNum与GeoNum一致
     //roadNum与GeoNum不一致
-
+    vector<RoadNet> mRoadNetVector = mOpenDriveParser.mOpenDriveStruct.mRoadNetVector;
     if (start->RoadNum == end->RoadNum && start->direction == end->direction)
     {
         PathNode mPathNode;
@@ -109,7 +113,7 @@ void AStarRoute::AStarMain(Point* start,Point* end,vector<RoadNet>* mRoadNetVect
         openList.erase(openList.begin());
         //遍历邻居
         vector<PathNode> NeighborSet;
-        getNeighborSetFromRoadNet(currentNode.id,currentNode.direction,mRoadNetVector,&NeighborSet);
+        getNeighborSetFromRoadNet(currentNode.id,currentNode.direction,&NeighborSet);
 
         for (unsigned long i = 0; i< NeighborSet.size();i++) {
             int neighborId = NeighborSet.at(i).id;
@@ -131,17 +135,17 @@ void AStarRoute::AStarMain(Point* start,Point* end,vector<RoadNet>* mRoadNetVect
             if(isInList(neighborId,neighborDirec,&closedList))
                 continue;
 
-            double tempGCost = getGCost(&currentNode,&NeighborSet.at(i),mRoadNetVector);
+            double tempGCost = getGCost(&currentNode,&NeighborSet.at(i));
 
             if(!isInList(neighborId,neighborDirec,&openList)){
                 Node temp ={};
                 temp.id = neighborId;
                 temp.direction = neighborDirec;
-                RoadNet* NeighRoad = getRoadNetById(neighborId,mRoadNetVector);
+                RoadNet* NeighRoad = getRoadNetById(neighborId);
                 temp.x = NeighRoad->end_x;
                 temp.y = NeighRoad->end_y;
-                temp.gCost = getGCost(&currentNode,&NeighborSet.at(i),mRoadNetVector);
-                temp.hCost = getHCost(end,&NeighborSet.at(i),mRoadNetVector);
+                temp.gCost = getGCost(&currentNode,&NeighborSet.at(i));
+                temp.hCost = getHCost(end,&NeighborSet.at(i));
                 temp.fCost = getFCost(&temp);
                 temp.preId = currentNode.id;
                 temp.preDirection = currentNode.direction;
@@ -186,13 +190,14 @@ bool AStarRoute::isInList(int RoadNum, int direction, vector<Node> *List)
 
 }
 
-void AStarRoute::getNeighborSetFromRoadNet(int id, int direction, vector<RoadNet>* mRoadNetVector,vector<PathNode>* NeighborSet)
+void AStarRoute::getNeighborSetFromRoadNet(int id, int direction,vector<PathNode>* NeighborSet)
 {
+    vector<RoadNet> mRoadNetVector = mOpenDriveParser.mOpenDriveStruct.mRoadNetVector;
     RoadNet* crtRoad = NULL;
-    for (unsigned long i = 0;i<mRoadNetVector->size();i++) {
-        if(id == mRoadNetVector->at(i).id)
+    for (unsigned long i = 0;i<mRoadNetVector.size();i++) {
+        if(id == mRoadNetVector.at(i).id)
         {
-            crtRoad = &mRoadNetVector->at(i);
+            crtRoad = &mRoadNetVector.at(i);
             break;
         }
 
@@ -241,13 +246,14 @@ void AStarRoute::reconstruction(Node current,vector<PathNode>* mPath)
     }
 }
 
-RoadNet* AStarRoute::getRoadNetById(int  id,vector<RoadNet>* mRoadNetVector)
+RoadNet* AStarRoute::getRoadNetById(int  id)
 {
+    vector<RoadNet> mRoadNetVector = mOpenDriveParser.mOpenDriveStruct.mRoadNetVector;
     RoadNet* res = NULL;
-    for (unsigned long i =0;i<mRoadNetVector->size();i++) {
-        if (id == mRoadNetVector->at(i).id)
+    for (unsigned long i =0;i<mRoadNetVector.size();i++) {
+        if (id == mRoadNetVector.at(i).id)
         {
-            res = &mRoadNetVector->at(i);
+            res = &mRoadNetVector.at(i);
             break;
         }
     }
@@ -266,9 +272,9 @@ Node* AStarRoute::getOriginMsg(int id, int direction, vector<Node> *openList)
     return choose;
 }
 
-void AStarRoute::getDataSet(vector<PathNode> *mPath, Point *start, Point *end, vector<RoadNet> *mRoadNetVector,vector<double>* xSet,vector<double>* ySet)
+void AStarRoute::getDataSet(vector<PathNode> *mPath, Point *start, Point *end,vector<double>* xSet,vector<double>* ySet)
 {
-
+    vector<RoadNet> mRoadNetVector = mOpenDriveParser.mOpenDriveStruct.mRoadNetVector;
     unsigned long mPathLength = mPath->size();
     double start_s = 0.0;
     double end_s = 0.0;
@@ -277,13 +283,13 @@ void AStarRoute::getDataSet(vector<PathNode> *mPath, Point *start, Point *end, v
     {
      start_s = start->s_inGeo;
      end_s = end->s_inGeo;
-     getDatapathCommon(mPath->at(0).id,mPath->at(0).direction,start_s,end_s,mRoadNetVector,xSet,ySet);
+     getDatapathCommon(mPath->at(0).id,mPath->at(0).direction,start_s,end_s,xSet,ySet);
      return;
     }
 
     for (unsigned long i =0;i<mPathLength;i++) {
         int direction = sign(mPath->at(i).direction);
-        RoadNet* crtRoad = getRoadNetById(mPath->at(i).id,mRoadNetVector);
+        RoadNet* crtRoad = getRoadNetById(mPath->at(i).id);
         vector<GeoObj> Geos = crtRoad->Geos;
         double RoadGeoEnd = Geos.at(Geos.size()-1).s + Geos.at(Geos.size()-1).length;
         vector<double> xTmp;
@@ -296,7 +302,7 @@ void AStarRoute::getDataSet(vector<PathNode> *mPath, Point *start, Point *end, v
                  end_s = RoadGeoEnd;
              else
                  end_s = 0;
-             getDatapathCommon(mPath->at(i).id,mPath->at(i).direction,start_s,end_s,mRoadNetVector,&xTmp,&yTmp);
+             getDatapathCommon(mPath->at(i).id,mPath->at(i).direction,start_s,end_s,&xTmp,&yTmp);
              xSet->insert(xSet->begin(),xTmp.begin(),xTmp.end());
              ySet->insert(ySet->begin(),yTmp.begin(),yTmp.end());
         }
@@ -309,7 +315,7 @@ void AStarRoute::getDataSet(vector<PathNode> *mPath, Point *start, Point *end, v
                 start_s = 0;
             else
                 start_s = RoadGeoEnd;
-            getDatapathCommon(mPath->at(i).id,mPath->at(i).direction,start_s,end_s,mRoadNetVector,&xTmp,&yTmp);
+            getDatapathCommon(mPath->at(i).id,mPath->at(i).direction,start_s,end_s,&xTmp,&yTmp);
             xSet->insert(xSet->end(),xTmp.begin(),xTmp.end());
             ySet->insert(ySet->end(),yTmp.begin(),yTmp.end());
         }
@@ -325,7 +331,7 @@ void AStarRoute::getDataSet(vector<PathNode> *mPath, Point *start, Point *end, v
                 start_s = RoadGeoEnd;
                 end_s = 0;
             }
-            getDatapathCommon(mPath->at(i).id,mPath->at(i).direction,start_s,end_s,mRoadNetVector,&xTmp,&yTmp);
+            getDatapathCommon(mPath->at(i).id,mPath->at(i).direction,start_s,end_s,&xTmp,&yTmp);
             xSet->insert(xSet->begin(),xTmp.begin(),xTmp.end());
             ySet->insert(ySet->begin(),yTmp.begin(),yTmp.end());
         }
@@ -334,8 +340,9 @@ void AStarRoute::getDataSet(vector<PathNode> *mPath, Point *start, Point *end, v
 
 }
 
-void AStarRoute::getDatapathCommon(int id, int direction, double start_s, double end_s, vector<RoadNet> *mRoadNetVector,vector<double>* xSet,vector<double>* ySet)
+void AStarRoute::getDatapathCommon(int id, int direction, double start_s, double end_s,vector<double>* xSet,vector<double>* ySet)
 {
+    vector<RoadNet> mRoadNetVector = mOpenDriveParser.mOpenDriveStruct.mRoadNetVector;
     double delta_s = 1.0;
     int N = floor(fabs((end_s - start_s) / delta_s));
     double sValueSet[N];
@@ -343,19 +350,19 @@ void AStarRoute::getDatapathCommon(int id, int direction, double start_s, double
         sValueSet[i] = start_s + i*(-direction)*delta_s;
         double data[3];
 
-        int size = mRoadNetVector->size();
-        int k = -1;
+        unsigned long size = mRoadNetVector.size();
+        unsigned long k = size;
 
-        for(int j=0;j<size;j++)
+        for(unsigned long j=0;j<size;j++)
         {
-                if (mRoadNetVector->at(j).id == id)
+                if (mRoadNetVector.at(j).id == id)
                 {
                     k = j;
                     break;
                 }
          }
 
-        mOpenDriveStruct->GetXYHdgByS(mRoadNetVector,k,sValueSet[i],data);
+        mOpenDriveParser.mOpenDriveStruct.GetXYHdgByS(k,sValueSet[i],data);
         //取offset一半作为轨迹点
         double x = data[0];
         double y = data[1];
@@ -368,16 +375,17 @@ void AStarRoute::getDatapathCommon(int id, int direction, double start_s, double
     }
 }
 
-Point AStarRoute::pointBelong(vector<RoadNet> *mRoadNetVector, double xp, double yp)
+Point AStarRoute::pointBelong(double xp, double yp)
 {
+    vector<RoadNet> mRoadNetVector = mOpenDriveParser.mOpenDriveStruct.mRoadNetVector;
     vector<Point> disList;
-    unsigned long size = mRoadNetVector->size();
+    unsigned long size = mRoadNetVector.size();
     for (unsigned long i = 0; i<size;i++) {
-        if(mRoadNetVector->at(i).junction == -1)
+        if(mRoadNetVector.at(i).junction == -1)
         {
-            for(unsigned long j =0;j<mRoadNetVector->at(i).Geos.size();j++)
+            for(unsigned long j =0;j<mRoadNetVector.at(i).Geos.size();j++)
             {
-                GeoObj tmp = mRoadNetVector->at(i).Geos.at(j);
+                GeoObj tmp = mRoadNetVector.at(i).Geos.at(j);
                 if(tmp.lineType.compare("line") == 0)
                 {
                     double Geo_s = tmp.s;
@@ -400,7 +408,7 @@ Point AStarRoute::pointBelong(vector<RoadNet> *mRoadNetVector, double xp, double
 
                     double s_inGeo = Geo_s + getPointsDis(x,y,Geo_x_start,Geo_y_start);
                     int direction = sideJudge(Geo_x_start,Geo_y_start,Geo_x_end,Geo_y_end,xp,yp);
-                    double offset = mOpenDriveStruct->GetSOffset(s_inGeo,direction,mRoadNetVector,i);
+                    double offset = mOpenDriveParser.mOpenDriveStruct.GetSOffset(s_inGeo,direction,i);
                     //计算参考线的交点关于offset的偏移
                     double hdg = tmp.hdg;
                     double x_offset = x + offset * cos(hdg  + direction*M_PI/2); //偏移后
@@ -429,7 +437,7 @@ Point AStarRoute::pointBelong(vector<RoadNet> *mRoadNetVector, double xp, double
                     point.v = fabs(v);
                     point.x = x;
                     point.y = y;
-                    point.RoadNum = mRoadNetVector->at(i).id ;
+                    point.RoadNum = mRoadNetVector.at(i).id ;
                     point.direction = direction;
                     point.hdg = hdg;
                     point.x_s = Geo_x_start;
@@ -471,5 +479,4 @@ Node AStarRoute::getPreNode(int id, int direction, vector<Node> *closedList)
         }
     }
     return choose;
-
 }

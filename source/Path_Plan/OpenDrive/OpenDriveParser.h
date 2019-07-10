@@ -14,7 +14,7 @@ using std::endl;
 class OpenDriveParser
 {
 public:
-    OpenDriveStruct* mOpenDriveStruct;
+    OpenDriveStruct mOpenDriveStruct;
 public:
     OpenDriveParser();
     ~OpenDriveParser();

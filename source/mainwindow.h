@@ -99,7 +99,7 @@ public: //OpenDrive
 
 public:
     Ui::MainWindow *ui;
-    CustomPlot* mCustomPlot;
+    CustomPlot mCustomPlot;
 private: //定时器
     QTimer *Rec_timer; //CAN定时接受
     QTimer *Send_timer; //CAN定时发送

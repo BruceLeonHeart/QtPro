@@ -1,6 +1,6 @@
 ﻿#ifndef ASTARROUTE_H
 #define ASTARROUTE_H
-#include "../OpenDrive/OpenDriveStruct.h"
+#include "../OpenDrive/OpenDriveParser.h"
 //sort方法
 #include <algorithm>
 using std::sort;
@@ -62,7 +62,8 @@ public:
     AStarRoute();
     Point startPoint;//起始点
     Point endPoint;//终止点
-    OpenDriveStruct* mOpenDriveStruct;
+    OpenDriveParser mOpenDriveParser;
+    //OpenDriveStruct* mOpenDriveStruct;
     vector<Node> openList;//开启列表
     vector<Node> closedList;//关闭列表
     vector<PathNode> mPath;//寻径结果
@@ -70,25 +71,25 @@ public:
     vector<double> path_y;
 
 public://点投影相关
-    Point pointBelong(vector<RoadNet>* mRoadNetVector,double xp,double yp);
+    Point pointBelong(double xp,double yp);
     static bool comparisonPoint(Point A,Point B);
 public://算法相关
     //获取GCost
-    double getGCost(Node* current,PathNode* neighbor,vector<RoadNet>* mRoadNetVector);
+    double getGCost(Node* current,PathNode* neighbor);
     //获取HCost
-    double getHCost(Point* endPoint,PathNode* neighbor,vector<RoadNet>* mRoadNetVector);
+    double getHCost(Point* endPoint,PathNode* neighbor);
     //获取FCost
     double getFCost(Node* node);
     //从OpenList中获取当前点
     Node  getCrtFromOpenList(vector<Node>* openList);
     static bool comparison(Node a,Node b);
-    void AStarMain(Point* start,Point* end,vector<RoadNet>* mRoadNetVector);
+    void AStarMain(Point* start,Point* end);
     //根据ID从路网中获取对应的RoadNet
-    RoadNet* getRoadNetById(int id,vector<RoadNet>* mRoadNetVector);
+    RoadNet* getRoadNetById(int id);
     //判断某个Road-direction是否处于List中
     bool isInList(int RoadNum,int direction,vector<Node>* List);
     //获取路网中的邻居
-    void getNeighborSetFromRoadNet(int id,int direction,vector<RoadNet>* mRoadNetVector,vector<PathNode>* NeighborSet);
+    void getNeighborSetFromRoadNet(int id,int direction,vector<PathNode>* NeighborSet);
     //回溯矩阵获得路径
     void reconstruction(Node current,vector<PathNode>* mPath);
     //获取前继节点
@@ -99,9 +100,9 @@ public://算法相关
     Node* getOriginMsg(int id,int direction,vector<Node>* openList);
 public://点集相关
     //获取算法得到的路径
-    void getDataSet(vector<PathNode>* mPath,Point* start,Point* end,vector<RoadNet>* mRoadNetVector,vector<double>* xSet,vector<double>* ySet);
+    void getDataSet(vector<PathNode>* mPath,Point* start,Point* end,vector<double>* xSet,vector<double>* ySet);
     //指定路段获取点集
-    void getDatapathCommon(int id,int direction,double start_s,double end_s,vector<RoadNet>* mRoadNetVector,vector<double>* xSet,vector<double>* ySet);
+    void getDatapathCommon(int id,int direction,double start_s,double end_s,vector<double>* xSet,vector<double>* ySet);
 };
 
 #endif // ASTARROUTE_H

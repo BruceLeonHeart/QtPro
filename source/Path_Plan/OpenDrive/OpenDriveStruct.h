@@ -80,14 +80,14 @@ public:
     Header mHeader;
 public:
     OpenDriveStruct();
-    unsigned int AddRoadNet( int id, double length, int junction);
+    unsigned long AddRoadNet( int id, double length, int junction);
     RoadNet* GetLastRoadNet();
     RoadNet* FindRoadNetById(int id);
-    void GetXYHdgByS(vector<RoadNet>* mRoadNetVector,int RoadIdx,double s,double* data);
+    void GetXYHdgByS(unsigned long RoadIdx,double s,double* data);
     void CoorGetFinalLine(GeoObj* mGeo,double length,double* data);
     void CoorGetFinalArc(GeoObj* mGeo,double length,double* data);
     void CoorGetFinalSpiral(GeoObj* mGeo,double length,double* data);
-    double  GetSOffset(double s,int id,vector<RoadNet>* mRoadNetVector,int RoadIdx);
+    double  GetSOffset(double s,int id,unsigned long RoadIdx);
 
     //获取参考线点集
     void getGeoset();

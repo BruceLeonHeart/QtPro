@@ -13,9 +13,9 @@ using std::set;
 class CustomPlot
 {
 public:
-     CustomPlot(QCustomPlot* qCustomPlot);
+     CustomPlot();
     virtual ~CustomPlot();
-private:
+public:
     QCustomPlot* plot;
 public:
     //初始化
@@ -29,9 +29,8 @@ public://地图相关
     //打印车道线
     void plotLane(int RoadIdx,int GeoId,int id);
 
-private://OpenDrive
-    OpenDriveStruct mOpenDriveStruct;
-    OpenDriveParser mOpenDriveParser;
+
+public://OpenDrive
     AStarRoute mAStarRoute;
     QVector<double> x;
     QVector<double> y;

@@ -7,15 +7,15 @@ OpenDriveStruct::OpenDriveStruct()
 
 }
 
-unsigned int OpenDriveStruct::AddRoadNet( int id, double length, int junction)
+unsigned long OpenDriveStruct::AddRoadNet( int id, double length, int junction)
 {
-    unsigned int index = mRoadNetVector.size();
+
+    unsigned long index = mRoadNetVector.size();
     RoadNet mRoadNet ={};
     mRoadNet.id = id;
     mRoadNet.length = length;
     mRoadNet.junction = junction;
     mRoadNetVector.push_back(mRoadNet);
-    cout<<"push OK!"<<endl;
     return index;
 }
 
@@ -27,25 +27,25 @@ RoadNet* OpenDriveStruct::GetLastRoadNet()
         return NULL;
 }
 
-void OpenDriveStruct::GetXYHdgByS(vector<RoadNet>* mRoadNetVector,int RoadIdx,double s,double * data)
+void OpenDriveStruct::GetXYHdgByS(unsigned long RoadIdx,double s,double * data)
 {
 
-    vector<GeoObj>* currentGeos = &(mRoadNetVector->at(RoadIdx).Geos);
+    vector<GeoObj> currentGeos = mRoadNetVector.at(RoadIdx).Geos;
 
-    int GeosLength = currentGeos->size();
-    int idx = GeosLength-1;
-    for (int i = 0;i<GeosLength;i++){
-        double s_start = currentGeos->at(i).s;
-        double s_end = currentGeos->at(i).s + currentGeos->at(i).length;
+    unsigned long GeosLength = currentGeos.size();
+    unsigned long idx = GeosLength-1;
+    for (unsigned long i = 0;i<GeosLength;i++){
+        double s_start = currentGeos.at(i).s;
+        double s_end = currentGeos.at(i).s + currentGeos.at(i).length;
         if((s>=s_start)&&(s<s_end))
         {
             idx = i;
             break;
         }
     }
-    double mlength = s - currentGeos->at(idx).s;
-    GeoObj* mGeo = &currentGeos->at(idx);
-    if (currentGeos->at(idx).lineType.compare("line") == 0)
+    double mlength = s - currentGeos.at(idx).s;
+    GeoObj* mGeo = &currentGeos.at(idx);
+    if (currentGeos.at(idx).lineType.compare("line") == 0)
     {
         double hdg = mGeo->hdg;
         double dx = mlength*cos(hdg);
@@ -56,9 +56,9 @@ void OpenDriveStruct::GetXYHdgByS(vector<RoadNet>* mRoadNetVector,int RoadIdx,do
         data[1] = y;
         data[2] = hdg;
     }
-    else if (currentGeos->at(idx).lineType.compare("arc") == 0)
+    else if (currentGeos.at(idx).lineType.compare("arc") == 0)
          CoorGetFinalArc(mGeo,mlength,data);
-    else if (currentGeos->at(idx).lineType.compare("spiral") == 0)
+    else if (currentGeos.at(idx).lineType.compare("spiral") == 0)
          CoorGetFinalSpiral(mGeo,mlength,data);
     else {
         data[0] = -999;
@@ -113,19 +113,19 @@ void OpenDriveStruct::CoorGetFinalSpiral(GeoObj* mGeo,double length,double* data
     data[2] = hdg;
 }
 
-double  OpenDriveStruct::GetSOffset(double s,int id,vector<RoadNet>* mRoadNetVector,int RoadIdx)
+double  OpenDriveStruct::GetSOffset(double s,int id,unsigned long RoadIdx)
 {
-    RoadNet currentRoad = mRoadNetVector->at(RoadIdx);
+    RoadNet currentRoad = mRoadNetVector.at(RoadIdx);
     vector<GeoObj> currentGeos = currentRoad.Geos;
     double GeoFinal = currentGeos.at(currentGeos.size()-1).s + currentGeos.at(currentGeos.size()-1).length;//最后一段几何的S终值
     vector<offsetObj> mOffset = currentRoad.Offsets;
 
     vector<Idset> mIdSet;
     Idset tempIdset;
-    for (int i = 0;i<mOffset.size();i++) {
+    for (unsigned long i = 0;i<mOffset.size();i++) {
         if (mOffset.at(i).id == id)
         {
-            tempIdset.idx = mOffset.at(i).s;
+            tempIdset.idx = mOffset.at(i).idx;
             tempIdset.s = mOffset.at(i).s;
             tempIdset.id = mOffset.at(i).id;
             tempIdset.type = mOffset.at(i).type;
@@ -133,11 +133,11 @@ double  OpenDriveStruct::GetSOffset(double s,int id,vector<RoadNet>* mRoadNetVec
             mIdSet.push_back(tempIdset);
         }
     }
-    int mIdSetlength = mIdSet.size();
+    unsigned long mIdSetlength = mIdSet.size();
     if (mIdSetlength == 1)
         mIdSet.at(0).s_end = GeoFinal;
     else {
-        for (int j =0;j<mIdSetlength;j++) {
+        for (unsigned long j =0;j<mIdSetlength;j++) {
             if(j==mIdSetlength-1)
                 mIdSet.at(j).s_end = GeoFinal;
             else
@@ -145,8 +145,8 @@ double  OpenDriveStruct::GetSOffset(double s,int id,vector<RoadNet>* mRoadNetVec
         }
     }
 
-    int crtId = mIdSetlength-1;
-    for (int m =0;m<mIdSetlength;m++) {
+    unsigned long crtId = mIdSetlength-1;
+    for (unsigned long m =0;m<mIdSetlength;m++) {
         if (s >= mIdSet.at(m).s && s < mIdSet.at(m).s_end)
             {
                 crtId = m;
@@ -160,9 +160,9 @@ double  OpenDriveStruct::GetSOffset(double s,int id,vector<RoadNet>* mRoadNetVec
 
 RoadNet* OpenDriveStruct::FindRoadNetById(int id)
 {
-    int size = mRoadNetVector.size();
-    int k = -1;
-    for(int i=0;i<size;i++)
+    unsigned long size = mRoadNetVector.size();
+    unsigned long k = 0;
+    for(unsigned long i=0;i<size;i++)
     {
             if (mRoadNetVector.at(i).id == id)
             {

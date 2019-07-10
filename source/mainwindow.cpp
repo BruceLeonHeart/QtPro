@@ -21,9 +21,24 @@ MainWindow::MainWindow(QWidget *parent) :
     Display_timer = new QTimer(this);
     connect(Display_timer,SIGNAL(timeout()),this,SLOT(Display_timerUpDate()));
     Display_timer->start(100);
-    CustomPlot* tmp =  new CustomPlot(ui->plot);
-    mCustomPlot = tmp;
-    mCustomPlot->initPlot();
+    mCustomPlot.plot = ui->plot;
+    mCustomPlot.initPlot();
+    mCustomPlot.plotMap();
+//    Point start = mCustomPlot.mAStarRoute.pointBelong(1000,250);
+//    Point end = mCustomPlot.mAStarRoute.pointBelong(1000,400);
+    Point start = mCustomPlot.mAStarRoute.pointBelong(-1300,40);
+    Point end = mCustomPlot.mAStarRoute.pointBelong(1000,400);
+    mCustomPlot.mAStarRoute.AStarMain(&start,&end);//执行算法后路径内容进行了填充
+    vector<double> x_set;
+     vector<double> y_set;
+     mCustomPlot.mAStarRoute.getDataSet(&mCustomPlot.mAStarRoute.mPath,&start,&end,&x_set,&y_set);
+     char path[64] = "/home/pz1_ad_04/桌面/2.txt";
+     ofstream fout(path);
+     assert(x_set.size() == y_set.size());
+     for (int i = 0; i <x_set.size(); i++)
+     {
+      fout <<x_set.at(i)<<","<<y_set.at(i)<< endl; // 使用与cout同样的方式进行写入
+     }
 }
 
 
@@ -379,5 +394,5 @@ void MainWindow::Pure_Pursuit_timer_timerUpDate()
 
 void MainWindow::on_pushButton_clicked()
 {
-    mCustomPlot->plotMap();
+    mCustomPlot.plotMap();
 }

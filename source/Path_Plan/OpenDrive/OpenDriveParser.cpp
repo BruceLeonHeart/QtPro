@@ -2,7 +2,7 @@
 
 OpenDriveParser::OpenDriveParser()
 {
-    mOpenDriveStruct = NULL;
+    //mOpenDriveStruct =NULL;
 }
 
 OpenDriveParser::~OpenDriveParser()
@@ -12,13 +12,13 @@ OpenDriveParser::~OpenDriveParser()
 void OpenDriveParser::appendMessages()
 {
     //获取路网对象
-    vector<RoadNet>* mRoadNetVector = &mOpenDriveStruct->mRoadNetVector;
+    vector<RoadNet>* mRoadNetVector = &mOpenDriveStruct.mRoadNetVector;
     for (unsigned long i = 0; i< mRoadNetVector->size();i++) {
             RoadNet* crtRoadNet = &mRoadNetVector->at(i);
             crtRoadNet->start_x = crtRoadNet->Geos.at(0).x;
             crtRoadNet->start_y = crtRoadNet->Geos.at(0).y;
             double data[3] ={0.0};
-            mOpenDriveStruct->GetXYHdgByS(mRoadNetVector,i,crtRoadNet->length,data);
+            mOpenDriveStruct.GetXYHdgByS(i,crtRoadNet->length,data);
             crtRoadNet->end_x = data[0];
             crtRoadNet->end_y = data[1];
     }
@@ -37,17 +37,17 @@ bool OpenDriveParser::ReadFile(string fileName)
             int checker=TIXML_SUCCESS;
             TiXmlElement *node=rootNode->FirstChildElement("header");
             ReadHeader(node);
-            cout<<"Header finished!"<<endl;
+
             //read roads
             node=rootNode->FirstChildElement("road");
             while (node!=0)
             {
-               //OK
+
                 ReadRoad(node);
                 node=node->NextSiblingElement("road");
 
             }
-            cout<<"Road finished!"<<endl;
+
             //read controllers
             node=rootNode->FirstChildElement("controller");
             while (node!=0)
@@ -55,7 +55,7 @@ bool OpenDriveParser::ReadFile(string fileName)
                 ReadController(node);
                 node=node->NextSiblingElement("controller");
             }
-            cout<<"Controller finished!"<<endl;
+
             //read junctions
             node=rootNode->FirstChildElement("junction");
             while (node!=0)
@@ -63,7 +63,6 @@ bool OpenDriveParser::ReadFile(string fileName)
                 ReadJunction(node);
                 node=node->NextSiblingElement("junction");
             }
-            cout<<"Junction finished!"<<endl;
 
             appendMessages();
             return true;
@@ -129,8 +128,8 @@ bool OpenDriveParser::ReadRoad (TiXmlElement *node)
         cout<<"Error parsing Road attributes"<<endl;
         return false;
     }
-    mOpenDriveStruct->AddRoadNet(id,length,junction);
-    RoadNet* lastRoadNet = mOpenDriveStruct->GetLastRoadNet();
+    mOpenDriveStruct.AddRoadNet(id,length,junction);
+    RoadNet* lastRoadNet = mOpenDriveStruct.GetLastRoadNet();
      cout<<"it's ok5"<<endl;
     TiXmlElement* subNode;
     //Get links
@@ -366,7 +365,7 @@ bool OpenDriveParser::ReadGeometryBlock (RoadNet* mRoadNet, TiXmlElement *&node,
 //    double curvature;
 //    double curvStart;
 //    double curvEnd;
-    GeoObj mGeoObj = {0.0,0.0,0.0,0.0,0.0,"",0.0,0.0,0.0};
+    GeoObj mGeoObj = {};
     mGeoObj.s = s;
     mGeoObj.x = x;
     mGeoObj.y = y;
@@ -896,7 +895,7 @@ bool OpenDriveParser::ReadJunctionConnection (TiXmlElement *node)
         cout<<"Error parsing Junction Connection attributes"<<endl;
         return false;
     }
-    RoadNet* mRoadNet = mOpenDriveStruct->FindRoadNetById(incomingRoad);
+    RoadNet* mRoadNet = mOpenDriveStruct.FindRoadNetById(incomingRoad);
     TiXmlElement *subNode=node->FirstChildElement("laneLink");
 
     while (subNode)
