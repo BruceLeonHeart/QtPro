@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mCustomPlot.plotMap();
 //    Point start = mCustomPlot.mAStarRoute.pointBelong(1000,250);
 //    Point end = mCustomPlot.mAStarRoute.pointBelong(1000,400);
-    Point start = mCustomPlot.mAStarRoute.pointBelong(-1300,40);
+    Point start = mCustomPlot.mAStarRoute.pointBelong(-1.3194880000000000e+02,3.7010000000000001e+00);
     Point end = mCustomPlot.mAStarRoute.pointBelong(1000,400);
     mCustomPlot.mAStarRoute.AStarMain(&start,&end);//执行算法后路径内容进行了填充
     vector<double> x_set;
