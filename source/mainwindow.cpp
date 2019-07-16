@@ -21,24 +21,31 @@ MainWindow::MainWindow(QWidget *parent) :
     Display_timer = new QTimer(this);
     connect(Display_timer,SIGNAL(timeout()),this,SLOT(Display_timerUpDate()));
     Display_timer->start(100);
+
+   // string fileName = "/home/pz1_ad_04/qtcreater/source/RealMap2.xml";
+   string fileName = "/home/pz1_ad_04/qtcreater/source/demomap.xml";
+  //  string fileName = "/home/pz1_ad_04/qtcreater/source/Realmap20190624.xml";
+
+   // mOpenDriveParser.ReadFile(fileName);
     mCustomPlot.plot = ui->plot;
+    mCustomPlot.mAStarRoute.mOpenDriveParser.ReadFile(fileName);
     mCustomPlot.initPlot();
     mCustomPlot.plotMap();
 //    Point start = mCustomPlot.mAStarRoute.pointBelong(1000,250);
 //    Point end = mCustomPlot.mAStarRoute.pointBelong(1000,400);
-    Point start = mCustomPlot.mAStarRoute.pointBelong(-1.3194880000000000e+02,3.7010000000000001e+00);
-    Point end = mCustomPlot.mAStarRoute.pointBelong(1000,400);
-    mCustomPlot.mAStarRoute.AStarMain(&start,&end);//执行算法后路径内容进行了填充
-    vector<double> x_set;
-     vector<double> y_set;
-     mCustomPlot.mAStarRoute.getDataSet(&mCustomPlot.mAStarRoute.mPath,&start,&end,&x_set,&y_set);
-     char path[64] = "/home/pz1_ad_04/桌面/2.txt";
-     ofstream fout(path);
-     assert(x_set.size() == y_set.size());
-     for (int i = 0; i <x_set.size(); i++)
-     {
-      fout <<x_set.at(i)<<","<<y_set.at(i)<< endl; // 使用与cout同样的方式进行写入
-     }
+//    Point start = mCustomPlot.mAStarRoute.pointBelong(-1.3194870000000000e+02,3.7000000000000001e+00);
+//    Point end = mCustomPlot.mAStarRoute.pointBelong(-50,50);
+//    mCustomPlot.mAStarRoute.AStarMain(&start,&end);//执行算法后路径内容进行了填充
+//    vector<double> x_set;
+//     vector<double> y_set;
+//     mCustomPlot.mAStarRoute.getDataSet(&mCustomPlot.mAStarRoute.mPath,&start,&end,&x_set,&y_set);
+//     char path[64] = "/home/pz1_ad_04/桌面/2.txt";
+//     ofstream fout(path);
+//     assert(x_set.size() == y_set.size());
+//     for (unsigned long i = 0; i <x_set.size(); i++)
+//     {
+//      fout <<x_set.at(i)<<","<<y_set.at(i)<< endl; // 使用与cout同样的方式进行写入
+//     }
 }
 
 
@@ -394,5 +401,19 @@ void MainWindow::Pure_Pursuit_timer_timerUpDate()
 
 void MainWindow::on_pushButton_clicked()
 {
-    mCustomPlot.plotMap();
+
+    Point start = mCustomPlot.mAStarRoute.pointBelong(-1.3194870000000000e+02,3.7000000000000001e+00);
+
+    Point end = mCustomPlot.mAStarRoute.pointBelong(mCustomPlot.point[0],mCustomPlot.point[1]);
+    mCustomPlot.mAStarRoute.AStarMain(&start,&end);//执行算法后路径内容进行了填充
+    vector<double> x_set;
+     vector<double> y_set;
+     mCustomPlot.mAStarRoute.getDataSet(&mCustomPlot.mAStarRoute.mPath,&start,&end,&x_set,&y_set);
+     char path[64] = "/home/pz1_ad_04/桌面/2.txt";
+     ofstream fout(path);
+     assert(x_set.size() == y_set.size());
+     for (unsigned long i = 0; i <x_set.size(); i++)
+     {
+      fout <<x_set.at(i)<<","<<y_set.at(i)<< endl; // 使用与cout同样的方式进行写入
+     }
 }

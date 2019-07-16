@@ -7,14 +7,16 @@
 #include "Path_Plan/OpenDrive/OpenDriveStruct.h"
 #include "Path_Plan/OpenDrive/OpenDriveParser.h"
 #include "Path_Plan/AStarRoute/AStarRoute.h"
+
 #include <set>
 using std::set;
 //界面UI类
-class CustomPlot
+class CustomPlot : public QCustomPlot
 {
 public:
-     CustomPlot();
+    CustomPlot();
     virtual ~CustomPlot();
+    double point[2];
 public:
     QCustomPlot* plot;
 public:
@@ -25,9 +27,11 @@ public://地图相关
     //打印地图
     void plotMap();
     //打印参考线
-    void plotGeo(GeoObj* mObj,int RoadIdx);
+    void plotGeo(GeoObj* mObj,unsigned long RoadIdx);
     //打印车道线
-    void plotLane(int RoadIdx,int GeoId,int id);
+    void plotLane(unsigned long RoadIdx,unsigned long GeoId,unsigned long id);
+
+    void mousePressEvent(QMouseEvent *event);
 
 
 public://OpenDrive

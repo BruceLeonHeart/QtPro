@@ -2,9 +2,7 @@
 
 AStarRoute::AStarRoute()
 {
-     string fileName = "/home/pz1_ad_04/qtcreater/source/RealMap2.xml";
-   // string fileName = "/home/pz1_ad_04/qtcreater/source/demomap.xml";
-    mOpenDriveParser.ReadFile(fileName);
+
 }
 
 double AStarRoute::getGCost(Node* current,PathNode* neighbor){

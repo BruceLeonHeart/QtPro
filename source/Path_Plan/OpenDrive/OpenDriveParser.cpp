@@ -2,7 +2,6 @@
 
 OpenDriveParser::OpenDriveParser()
 {
-    //mOpenDriveStruct =NULL;
 }
 
 OpenDriveParser::~OpenDriveParser()
