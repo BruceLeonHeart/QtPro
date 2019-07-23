@@ -83,11 +83,15 @@ public:
     unsigned int AddRoadNet( int id, double length, int junction);
     RoadNet* GetLastRoadNet();
     RoadNet* FindRoadNetById(int id);
-    void GetXYHdgByS(vector<RoadNet>* mRoadNetVector,unsigned long RoadIdx,double s,double* data);
+    //根据S值获取[x,y,hdg]的值，并返回所属的Geo序列值
+    unsigned long GetXYHdgByS(unsigned long RoadIdx,double s,double* data);
     void CoorGetFinalLine(GeoObj* mGeo,double length,double* data);
     void CoorGetFinalArc(GeoObj* mGeo,double length,double* data);
     void CoorGetFinalSpiral(GeoObj* mGeo,double length,double* data);
-    double  GetSOffset(double s,int id,vector<RoadNet>* mRoadNetVector,unsigned long RoadIdx);
+    //根据S值获取offset值
+    double  GetSOffset(double s,int id,unsigned long RoadIdx);
+    //根据S值获取所属的laneSection序列值
+    unsigned long getLaneSectionIdByS(unsigned long RoadIdx,double s);
 
 
 };

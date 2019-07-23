@@ -13,7 +13,12 @@ extern "C"{
 
 #include <iostream>
 #include <fstream>
+#include<iomanip>
+
 using std::ofstream;
+using std::ios;
+using namespace std;
+
 struct Point{
     double v;
     double x;

@@ -7,6 +7,11 @@
 #include <set>
 #include "../TinyXML/tinyxml.h"
 #include "OpenDriveStruct.h"
+
+#include <iostream>
+#include <fstream>
+using std::ofstream;
+
 using std::vector;
 using std::string;
 using std::cout;
@@ -27,7 +32,8 @@ class OpenDriveParser
 {
 public:
     OpenDriveStruct* mOpenDriveStruct;
-    vector<vector<PointData> > lines; //线序列
+    vector<vector<PointData> > lines; //地图线序列（参考线+Lane）
+    vector<vector<PointData> > geoLines; //参考线序列
 
 public:
     OpenDriveParser();
@@ -75,6 +81,8 @@ public:
         //--------------
     //获取地图点集
     void getMapDataSet();
+    // 获取参考线点集序列并生成文件--hgz需求 added 2019-7-22
+    void getGeoDataSet();
 
 };
 

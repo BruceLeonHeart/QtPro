@@ -353,18 +353,18 @@ void AStarRoute::getDatapathCommon(int id, int direction, double start_s, double
                 }
          }
 
-        mOpenDriveStruct->GetXYHdgByS(mRoadNetVector,k,sValueSet[i],data);//获取X,Y
-        CoorTransGPS(data);//坐标系转换
+        unsigned long Geoidx = mOpenDriveStruct->GetXYHdgByS(k,sValueSet[i],data);//获取X,Y以及所在Geo
+        //CoorTransGPS(data);//坐标系转换
         waypointnode tmp;
         //取offset一半作为轨迹点
         double x = data[0];
         double y = data[1];
         double hdg = data[2];
-        double offset = mOpenDriveStruct->GetSOffset(sValueSet[i],direction,mRoadNetVector,k);
+        double offset = mOpenDriveStruct->GetSOffset(sValueSet[i],direction,k);
         //         x = x + offset*cos(hdg + sign(direction)*M_PI/2)/2;
         //         y = y + offset*sin(hdg + sign(direction)*M_PI/2)/2;
-        tmp.lng = x;
-        tmp.lat = y;
+        tmp.lng = x; //经度
+        tmp.lat = y; //纬度
         tmp.type = 0;
         tmp.b_left = false;
         tmp.b_right = false;
@@ -375,8 +375,8 @@ void AStarRoute::getDatapathCommon(int id, int direction, double start_s, double
         tmp.road_id = id;
         tmp.junction_Id = 0;
         tmp.geometryblock_id = 0;
-        tmp.geometry_id = 0;
-        tmp.laneSection_id = 0;
+        tmp.geometry_id = Geoidx;
+        tmp.laneSection_id = mOpenDriveStruct->getLaneSectionIdByS(k,sValueSet[i]);
         if (sign(direction) == 1)
         {
             tmp.lane_left_id = direction;
@@ -430,7 +430,7 @@ Point AStarRoute::pointBelong(vector<RoadNet> *mRoadNetVector, double xp, double
 
                     double s_inGeo = Geo_s + getPointsDis(x,y,Geo_x_start,Geo_y_start);
                     int direction = sideJudge(Geo_x_start,Geo_y_start,Geo_x_end,Geo_y_end,xp,yp);
-                    double offset = mOpenDriveStruct->GetSOffset(s_inGeo,direction,mRoadNetVector,i);
+                    double offset = mOpenDriveStruct->GetSOffset(s_inGeo,direction,i);
                     //计算参考线的交点关于offset的偏移
                     double hdg = tmp.hdg;
                     double x_offset = x + offset * cos(hdg  + direction*M_PI/2); //偏移后
@@ -513,8 +513,8 @@ void AStarRoute::CoorTransGPS(double *point)
     double original_altitude = 0.0;                 //原点处海拔：0
     double original_heading = 0.0;                  //正北方向为航向角0点
     // 距离差分信息---------------------------------------------------
-    double latitude_step = 111210;                  //DNTC附近，南北方向 111,210m/1°N(latitude)
-    double longitude_step = 101950;                 //DNTC附近，东西方向 101,950m/1°E(longitude)
+    double latitude_step = 111210.0;                  //DNTC附近，南北方向 111,210m/1°N(latitude)
+    double longitude_step = 101950.0;                 //DNTC附近，东西方向 101,950m/1°E(longitude)
     //原始笛卡尔坐标系信息
     double x = point[0];
     double y = point[1];
@@ -543,6 +543,7 @@ void AStarRoute::getDataFile()
         <<"road_id"<<"\t"
         <<"junction_id"<<"\t"
         <<"geometryblock_id"<<"\t"
+        <<"geometry_id"<<"\t"
         <<"laneSection_id"<<"\t"
         <<"lane_left_id"<<"\t"
         <<"lane_right_id"
@@ -567,7 +568,9 @@ void AStarRoute::getDataFile()
 //        <<tmp.lane_left_id<<","<<"\t"
 //        <<tmp.lane_right_id
 //        << endl; // 使用与cout同样的方式进行写入
-     fout <<tmp.lng<<"\t"
+    fout <<setiosflags(ios::fixed);
+
+     fout<<setprecision(15)<<tmp.lng<<"\t"
         <<tmp.lat<<"\t"
         <<tmp.type<<"\t"
         <<tmp.b_left<<"\t"
@@ -579,6 +582,7 @@ void AStarRoute::getDataFile()
         <<tmp.road_id<<"\t"
         <<tmp.junction_Id<<"\t"
         <<tmp.geometryblock_id<<"\t"
+          <<tmp.geometry_id<<"\t"
         <<tmp.laneSection_id<<"\t"
         <<tmp.lane_left_id<<"\t"
         <<tmp.lane_right_id

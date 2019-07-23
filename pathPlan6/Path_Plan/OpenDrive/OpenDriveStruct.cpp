@@ -27,10 +27,11 @@ RoadNet* OpenDriveStruct::GetLastRoadNet()
         return NULL;
 }
 
-void OpenDriveStruct::GetXYHdgByS(vector<RoadNet>* mRoadNetVector,unsigned long RoadIdx,double s,double * data)
+unsigned long OpenDriveStruct::GetXYHdgByS(unsigned long RoadIdx,double s,double * data)
 {
 
-    vector<GeoObj>* currentGeos = &(mRoadNetVector->at(RoadIdx).Geos);
+    vector<GeoObj>* currentGeos = &(mRoadNetVector.at(RoadIdx).Geos);
+
 
     unsigned long GeosLength = currentGeos->size();
     unsigned long idx = GeosLength-1;
@@ -65,7 +66,7 @@ void OpenDriveStruct::GetXYHdgByS(vector<RoadNet>* mRoadNetVector,unsigned long 
         data[1] = -999;
         data[2] = -999;
     }
-    return;
+    return idx;
 
 }
 
@@ -113,9 +114,9 @@ void OpenDriveStruct::CoorGetFinalSpiral(GeoObj* mGeo,double length,double* data
     data[2] = hdg;
 }
 
-double  OpenDriveStruct::GetSOffset(double s,int id,vector<RoadNet>* mRoadNetVector,unsigned long RoadIdx)
+double  OpenDriveStruct::GetSOffset(double s,int id,unsigned long RoadIdx)
 {
-    RoadNet currentRoad = mRoadNetVector->at(RoadIdx);
+    RoadNet currentRoad = mRoadNetVector.at(RoadIdx);
     vector<GeoObj> currentGeos = currentRoad.Geos;
     double GeoFinal = currentGeos.at(currentGeos.size()-1).s + currentGeos.at(currentGeos.size()-1).length;//最后一段几何的S终值
     vector<offsetObj> mOffset = currentRoad.Offsets;
@@ -171,4 +172,43 @@ RoadNet* OpenDriveStruct::FindRoadNetById(int id)
             }
      }
     return &mRoadNetVector.at(k);
+}
+
+unsigned long OpenDriveStruct::getLaneSectionIdByS(unsigned long RoadIdx, double s)
+{
+
+
+    RoadNet currentRoad = mRoadNetVector.at(RoadIdx);
+
+    vector<GeoObj> currentGeos = currentRoad.Geos;
+    double GeoFinal = currentGeos.at(currentGeos.size()-1).s + currentGeos.at(currentGeos.size()-1).length;//最后一段几何的S终值
+
+    vector<offsetObj> mOffset = currentRoad.Offsets;
+
+    unsigned long mOffsetSize = mOffset.size();
+    unsigned long idx = 999;
+    for (unsigned long i = 0;i<mOffsetSize;i++) {
+        if(i<mOffsetSize-1)
+        {
+            if(s>= mOffset.at(i).s && s< mOffset.at(i+1).s)
+            {
+                idx = i;
+                break;
+            }
+        }
+        else {
+            if(s>= mOffset.at(i).s && s<= GeoFinal)
+            {
+                idx = i;
+                break;
+            }
+        }
+
+
+    }
+
+    return mOffset.at(idx).idx;
+
+
+
 }

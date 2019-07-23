@@ -18,7 +18,7 @@ void OpenDriveParser::appendMessages()
             crtRoadNet->start_x = crtRoadNet->Geos.at(0).x;
             crtRoadNet->start_y = crtRoadNet->Geos.at(0).y;
             double data[3] ={0.0};
-            mOpenDriveStruct->GetXYHdgByS(mRoadNetVector,i,crtRoadNet->length,data);
+            mOpenDriveStruct->GetXYHdgByS(i,crtRoadNet->length,data);
             crtRoadNet->end_x = data[0];
             crtRoadNet->end_y = data[1];
     }
@@ -990,7 +990,7 @@ void OpenDriveParser::getMapDataSet()
             double data[3]={0} ;
             for (int var = 0; var < N; ++var) {
                 sValueset[var] = mObj.s + delta_s *var;
-                mOpenDriveStruct->GetXYHdgByS(&mOpenDriveStruct->mRoadNetVector,i,sValueset[var], data);
+                mOpenDriveStruct->GetXYHdgByS(i,sValueset[var], data);
                 PointData tmpPoint;
                 double x = data[0];
                 double y = data[1];
@@ -1025,13 +1025,13 @@ void OpenDriveParser::getMapDataSet()
 
                 for (int var = 0; var < N; ++var) {
                     sValueset[var] = mOpenDriveStruct->mRoadNetVector.at(i).Geos.at(n).s + delta_s *var;
-                    mOpenDriveStruct->GetXYHdgByS(&mOpenDriveStruct->mRoadNetVector,i,sValueset[var], data);
+                    mOpenDriveStruct->GetXYHdgByS(i,sValueset[var], data);
                     PointData tmpPoint;
                     double x = data[0];
                     double y = data[1];
                     double hdg = data[2];
                     int id = *it;
-                    double offset = mOpenDriveStruct->GetSOffset(sValueset[var],id,&mOpenDriveStruct->mRoadNetVector,i);
+                    double offset = mOpenDriveStruct->GetSOffset(sValueset[var],id,i);
                     x = x + offset*cos(hdg + sign(id)*M_PI/2);
                     y = y + offset*sin(hdg + sign(id)*M_PI/2);
                     tmpPoint.x = x;
@@ -1042,4 +1042,54 @@ void OpenDriveParser::getMapDataSet()
             }
         }
 }
+}
+
+void OpenDriveParser::getGeoDataSet()
+{
+    unsigned long  RoadNetNum = mOpenDriveStruct->mRoadNetVector.size();
+    unsigned long i;
+    for(i=0 ; i<RoadNetNum ; i++){
+        vector<GeoObj> mGeos;
+        mGeos = mOpenDriveStruct->mRoadNetVector.at(i).Geos;
+        unsigned long mGeoslength = mGeos.size();
+       // double RoadGeoEnd = mGeos.at(mGeoslength-1).s + mGeos.at(mGeoslength-1).length;
+        //获取参考线
+        unsigned long j;
+        vector<PointData> tmp;
+        for(j =0;j<mGeoslength;j++){
+            double delta_s = 0.5;
+            GeoObj mObj = mGeos.at(j);
+            int N = floor(mObj.length/delta_s);
+
+
+            double sValueset[N];
+            double data[3]={0} ;
+            for (int var = 0; var < N; ++var) {
+                sValueset[var] = mObj.s + delta_s *var;
+                mOpenDriveStruct->GetXYHdgByS(i,sValueset[var], data);
+                PointData tmpPoint;
+                double x = data[0];
+                double y = data[1];
+                 //double hdg = data[2];
+                tmpPoint.x = x;
+                tmpPoint.y = y;
+                tmp.push_back(tmpPoint);
+            }
+
+        }
+        geoLines.push_back(tmp);
+}
+
+    char path[64] = "/home/pz1_ad_04/桌面/hgz.txt";
+    ofstream fout(path);
+    for (unsigned long m = 0; m <geoLines.size(); m++)
+    {
+        vector<PointData> tmp = geoLines.at(m);
+        for (unsigned long n = 0; n<tmp.size();n++) {
+            if (n < tmp.size()-1)
+            fout << tmp.at(n).x<< ","<<tmp.at(n).y<<",";
+            else
+            fout << tmp.at(n).x<< ","<<tmp.at(n).y<<endl;
+        }
+    }
 }

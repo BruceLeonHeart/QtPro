@@ -16,11 +16,14 @@ MainWindow::MainWindow(QWidget *parent) :
      ui->setupUi(this);
      //读取路网结构
      mOpenDriveParser.mOpenDriveStruct = &mOpenDriveStruct;
-     string fileName = "/home/pz1_ad_04/qtcreater/pathPlan3/demomap.xml";
+     //string fileName = "/home/pz1_ad_04/qtcreater/pathPlan3/demomap.xml";
      //string fileName = "/home/pz1_ad_04/qtcreater/source/RealMap2.xml";
-    // string fileName = "/home/pz1_ad_04/qtcreater/pathPlan5/Realmap_20190701.xml";
+     //string fileName = "/home/pz1_ad_04/qtcreater/pathPlan5/Realmap_20190701.xml";
+     string fileName = "/home/pz1_ad_04/qtcreater/pathPlan6/Realmap20190624.xml";
+
      mOpenDriveParser.ReadFile(fileName);
      mOpenDriveParser.getMapDataSet();
+     mOpenDriveParser.getGeoDataSet();
      vector<RoadNet>* tmp = &mOpenDriveStruct.mRoadNetVector;
      ui->mapView->axisRect()->setupFullAxesBox(true);
      ui->mapView->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
@@ -29,8 +32,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
      mAStarRoute.mOpenDriveStruct = &mOpenDriveStruct;
-     Point start = mAStarRoute.pointBelong(tmp,1000,250);
-     Point end = mAStarRoute.pointBelong(tmp,1000,400);
+     //demomap
+//     Point start = mAStarRoute.pointBelong(tmp,1000,250);
+//     Point end = mAStarRoute.pointBelong(tmp,1000,400);
+     //0701
+//     Point start = mAStarRoute.pointBelong(tmp,-50,-20);
+//     Point end = mAStarRoute.pointBelong(tmp,-50,20);
+     //0624
+     Point start = mAStarRoute.pointBelong(tmp,-132,3.701);
+     Point end = mAStarRoute.pointBelong(tmp,9.95,-71.79);
+
      mAStarRoute.AStarMain(&start,&end,tmp);//执行算法后路径内容进行了填充，得到道路级别的序列
 
      mAStarRoute.getDataSet(&mAStarRoute.mPath,&start,&end,tmp);//利用道路级别的序列，得到轨迹点级别的序列
