@@ -1048,7 +1048,8 @@ void OpenDriveParser::getGeoDataSet()
 {
     unsigned long  RoadNetNum = mOpenDriveStruct->mRoadNetVector.size();
     unsigned long i;
-    for(i=0 ; i<RoadNetNum ; i++){
+    for(i=0 ; i<RoadNetNum ; i++)
+    {
         vector<GeoObj> mGeos;
         mGeos = mOpenDriveStruct->mRoadNetVector.at(i).Geos;
         unsigned long mGeoslength = mGeos.size();
@@ -1078,7 +1079,7 @@ void OpenDriveParser::getGeoDataSet()
 
         }
         geoLines.push_back(tmp);
-}
+    }
 
     char path[64] = "/home/pz1_ad_04/桌面/hgz.txt";
     ofstream fout(path);

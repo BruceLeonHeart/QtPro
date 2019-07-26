@@ -101,6 +101,9 @@ public:
 
 public://点投影相关
     Point pointBelong(vector<RoadNet>* mRoadNetVector,double xp,double yp);
+    //2019-07-24 甘工需求：起点包含hdg，终点处于哪一侧均可
+    Point startPointBelong(vector<RoadNet>* mRoadNetVector,double xp,double yp,double hdg);
+    Point endPointBelong(vector<RoadNet>* mRoadNetVector,double xp,double yp);
     static bool comparisonPoint(Point A,Point B);
 public://算法相关
     //获取GCost

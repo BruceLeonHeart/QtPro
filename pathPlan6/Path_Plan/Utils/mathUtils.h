@@ -35,4 +35,5 @@ void getCrossMsg(double x_start,double y_start,double hdg,double Point_x,double 
 int sideJudge(double x1,double y1,double x2,double y2,double x3,double y3);
 
 
+
 #endif // MATHUTILS_H

@@ -589,3 +589,202 @@ void AStarRoute::getDataFile()
         << endl; // 使用与cout同样的方式进行写入
     }
 }
+
+Point AStarRoute::startPointBelong(vector<RoadNet> *mRoadNetVector, double xp, double yp,double hdg_p)
+{
+
+    vector<Point> disList;
+    unsigned long  RoadNetNum = mOpenDriveStruct->mRoadNetVector.size();
+    unsigned long i;
+    for(i=0 ; i<RoadNetNum ; i++)
+    {
+        vector<GeoObj> mGeos;
+        mGeos = mOpenDriveStruct->mRoadNetVector.at(i).Geos;
+        unsigned long mGeoslength = mGeos.size();
+       // double RoadGeoEnd = mGeos.at(mGeoslength-1).s + mGeos.at(mGeoslength-1).length;
+        //获取参考线
+        unsigned long j;
+
+        for(j =0;j<mGeoslength;j++){
+            GeoObj tmp = mRoadNetVector->at(i).Geos.at(j);
+            double Geo_s = tmp.s;
+            double Geo_s_end = tmp.s + tmp.length;
+            double Geo_x_start = tmp.x;
+            double Geo_y_start = tmp.y;
+            double Geo_hdg_start = tmp.hdg;
+
+            double delta_s = 0.5;
+            GeoObj mObj = mGeos.at(j);
+            int N = floor(mObj.length/delta_s);
+            double sValueset[N];
+            double data[3]={0} ;
+            for (int var = 0; var < N; ++var) {
+                sValueset[var] = mObj.s + delta_s *var;
+                double s_inGeo = sValueset[var];
+                mOpenDriveStruct->GetXYHdgByS(i,s_inGeo, data);
+                double x = data[0];
+                double y = data[1];
+                double hdg = data[2];
+                double v = getPointsDis(x,y,xp,yp);
+                if(cos(fabs(hdg_p - hdg)) > 0.5) //小于60度,视为同方向
+                {
+                    //现在已知一点及该点方向，判断录入的点处于该点的左右侧
+                    //取已知点该方向上任意一点作向量来进行判断
+                    double x_tmp = x + 100.0*cos(hdg);
+                    double y_tmp = y + 100.0*sin(hdg);
+                    int direction = sideJudge(x,y,x_tmp,y_tmp,xp,yp);
+                    double offset = mOpenDriveStruct->GetSOffset(sValueset[var],direction,i);
+                    assert(direction != 0); //断定位置不处于参考线上
+                    double GeoData[3];
+                    mOpenDriveStruct->GetXYHdgByS(i,Geo_s_end,GeoData);
+                    double Geo_x_end = GeoData[0];
+                    double Geo_y_end = GeoData[1];
+                    double Geo_hdg_end = GeoData[2];
+                    double Geo_end_offset = mOpenDriveStruct->GetSOffset(Geo_s_end,direction,i);
+                    double Geo_start_offset = mOpenDriveStruct->GetSOffset(Geo_s,direction,i);
+                    double x_offset = x + offset * cos(hdg  + direction*M_PI/2); //偏移后
+                    double y_offset = y + offset * sin(hdg  + direction*M_PI/2); //偏移后
+                    double x_s_offset,x_e_offset,y_s_offset,y_e_offset;
+                    //同向偏移
+                    if (direction == -1)
+                    {
+                         x_s_offset = Geo_x_start + Geo_start_offset * cos(Geo_hdg_start + direction*M_PI/2); //偏移后
+                         y_s_offset = Geo_y_start + Geo_start_offset * sin(Geo_hdg_start + direction*M_PI/2); //偏移后
+                         x_e_offset = Geo_x_end + Geo_end_offset * cos(Geo_hdg_end + direction*M_PI/2); //偏移后
+                         y_e_offset = Geo_y_end + Geo_end_offset * sin(Geo_hdg_end + direction*M_PI/2); //偏移后
+                    }
+
+
+                    //反向偏移
+                    if (direction == 1)
+                    {
+                         x_s_offset = Geo_x_end + Geo_end_offset * cos(Geo_hdg_end + direction*M_PI/2); //偏移后
+                         y_s_offset = Geo_y_end + Geo_end_offset * sin(Geo_hdg_end + direction*M_PI/2); //偏移后
+                         x_e_offset = Geo_x_start + Geo_start_offset * cos(Geo_hdg_start + direction*M_PI/2); //偏移后
+                         y_e_offset = Geo_y_start + Geo_start_offset * sin(Geo_hdg_start + direction*M_PI/2); //偏移后
+                    }
+                   //tmp组装
+                    Point point;
+                    point.v = fabs(v); //
+                    point.x = x; //
+                    point.y = y; //
+                    point.RoadNum = mRoadNetVector->at(i).id; //
+                    point.direction = direction; //
+                    point.hdg = hdg; //
+                    point.x_s = Geo_x_start; //
+                    point.y_s = Geo_y_start; //
+                    point.x_e = Geo_x_end;  //
+                    point.y_e = Geo_y_end; //
+                    point.s_inGeo = s_inGeo; //
+                    point.offset = offset; //
+                    point.x_offset = x_offset; //
+                    point.y_offset = y_offset;//
+                    point.x_s_offset = x_s_offset;//
+                    point.y_s_offset = y_s_offset;//
+                    point.x_e_offset = x_e_offset;//
+                    point.y_e_offset = y_e_offset;//
+                    point.GeoIdx = j;//
+                    point.s_start = Geo_s; //
+                    point.s_end = Geo_s_end; //
+                    disList.push_back(point);
+
+                }
+                else {
+                    continue;
+                }
+
+            }
+        }
+    }
+    sort(disList.begin(),disList.end(),comparisonPoint);
+    return disList.at(0);
+}
+
+
+Point AStarRoute::endPointBelong(vector<RoadNet> *mRoadNetVector, double xp, double yp)
+{
+    vector<Point> disList;
+    unsigned long size = mRoadNetVector->size();
+    for (unsigned long i = 0; i<size;i++) {
+        if(mRoadNetVector->at(i).junction == -1)
+        {
+            for(unsigned long j =0;j<mRoadNetVector->at(i).Geos.size();j++)
+            {
+                GeoObj tmp = mRoadNetVector->at(i).Geos.at(j);
+                if(tmp.lineType.compare("line") == 0)
+                {
+                    double Geo_s = tmp.s;
+                    double Geo_s_end = tmp.s + tmp.length;
+                    double Geo_x_start = tmp.x;
+                    double Geo_y_start = tmp.y;
+                    double Geo_x_end = tmp.x + tmp.length*cos(tmp.hdg);
+                    double Geo_y_end = tmp.y + tmp.length*sin(tmp.hdg);
+                    double data [3];
+                    getCrossMsg(Geo_x_start,Geo_y_start,tmp.hdg,xp,yp,data);
+                    double v = data[0];
+                    double x = data[1];
+                    double y = data[2];
+
+                    bool flag1= (x<=fmax(Geo_x_start,Geo_x_end))&&(x>=fmin(Geo_x_start,Geo_x_end));
+                    bool flag2= (y<=fmax(Geo_y_start,Geo_y_end))&&(y>=fmin(Geo_y_start,Geo_y_end));
+
+                    if(!(flag1&&flag2))
+                        continue;
+
+                    double s_inGeo = Geo_s + getPointsDis(x,y,Geo_x_start,Geo_y_start);
+                    int direction = sideJudge(Geo_x_start,Geo_y_start,Geo_x_end,Geo_y_end,xp,yp);
+                    double offset = mOpenDriveStruct->GetSOffset(s_inGeo,direction,i);
+                    //计算参考线的交点关于offset的偏移
+                    double hdg = tmp.hdg;
+                    double x_offset = x + offset * cos(hdg  + direction*M_PI/2); //偏移后
+                    double y_offset = y + offset * sin(hdg  + direction*M_PI/2); //偏移后
+                    double x_s_offset,x_e_offset,y_s_offset,y_e_offset;
+                    //同向偏移
+                    if (direction == -1)
+                    {
+                         x_s_offset = Geo_x_start + offset * cos(hdg + direction*M_PI/2); //偏移后
+                         y_s_offset = Geo_y_start + offset * sin(hdg + direction*M_PI/2); //偏移后
+                         x_e_offset = Geo_x_end + offset * cos(hdg + direction*M_PI/2); //偏移后
+                         y_e_offset = Geo_y_end + offset * sin(hdg + direction*M_PI/2); //偏移后
+                    }
+
+
+                    //反向偏移
+                    if (direction == 1)
+                    {
+                         x_s_offset = Geo_x_end + offset * cos(hdg + direction*M_PI/2); //偏移后
+                         y_s_offset = Geo_y_end + offset * sin(hdg + direction*M_PI/2); //偏移后
+                         x_e_offset = Geo_x_start + offset * cos(hdg + direction*M_PI/2); //偏移后
+                         y_e_offset = Geo_y_start + offset * sin(hdg + direction*M_PI/2); //偏移后
+                    }
+
+                    Point point;
+                    point.v = fabs(v);
+                    point.x = x;
+                    point.y = y;
+                    point.RoadNum = mRoadNetVector->at(i).id ;
+                    point.direction = direction;
+                    point.hdg = hdg;
+                    point.x_s = Geo_x_start;
+                    point.y_s = Geo_y_start;
+                    point.x_e = Geo_x_end;
+                    point.y_e = Geo_y_end;
+                    point.s_inGeo = s_inGeo;
+                    point.offset = offset;
+                    point.x_offset = x_offset;
+                    point.y_offset = y_offset;
+                    point.x_s_offset = x_s_offset;
+                    point.y_s_offset = y_s_offset;
+                    point.x_e_offset = x_e_offset;
+                    point.y_e_offset = y_e_offset;
+                    point.GeoIdx = j;
+                    point.s_start = Geo_s;
+                    point.s_end = Geo_s_end;
+                    disList.push_back(point);
+                }
+            }
+        }
+    }
+    sort(disList.begin(),disList.end(),comparisonPoint);
+    return disList.at(0);
+}

@@ -33,7 +33,7 @@ double integral(double hdg,double curvStart,double c,
 double getPointsDis(double x1,double y1,double x2,double y2){
     double delta_x = fabs(x1-x2);
     double delta_y = fabs(y1-y2);
-    return sqrt(delta_x * delta_x + delta_y + delta_y);
+    return sqrt(delta_x * delta_x + delta_y * delta_y);
 }
 
 //求Offset

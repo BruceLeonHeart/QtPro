@@ -27,6 +27,7 @@ void CreatTxt(char* pathName, unsigned char* rBuffer,int length)//创建txt文�
 }
 
 
+/**
 int main()
 {
     vector<int> a(15);
@@ -69,4 +70,6 @@ int main()
     system("pause");
     return 0;
 }
+*/
+
 
