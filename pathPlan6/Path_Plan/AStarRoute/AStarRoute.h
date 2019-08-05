@@ -65,14 +65,33 @@ struct Node{
 //全局规划接口基本点格式
 struct waypointnode
 {
+    //纬度
     double lat;
+    //经度
     double lng;
+    //0:普通路上路点或者路口内点
+    //1:直行路口入点
+    //2:右转路口入点
+    //3:左转路口入点
+    //4:掉头路口入点
+    //5:不规则路口入点
+    //6-8:
+    //9:路口出点
+    //10-28:
+    //29:车道切换点前车道路点
+    //30:车道切换后点车道路点
     int type;
+    //允许向左侧变道
     bool b_left;
+    //允许向右侧变道
     bool b_right;
+    //左侧车道允许变入本车道
     bool b_left_rightlane;
+    //右侧车道允许变入本车道
     bool b_right_leftlane;
+    //限速
     double speed_limit;
+    //车道宽度
     double lane_width;
     int road_id;
     int junction_Id;

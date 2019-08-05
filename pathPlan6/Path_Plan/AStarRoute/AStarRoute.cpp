@@ -393,6 +393,16 @@ void AStarRoute::getDatapathCommon(int id, int direction, double start_s, double
             tmp.lane_right_id = 0;
         }
 
+        if(i == 0)
+        {
+            tmp.type = 1;
+        }
+
+        if(i == N-1)
+        {
+            tmp.type = 9;
+        }
+
         path->push_back(tmp);
 
     }
