@@ -1,0 +1,3 @@
+/home/lmq/文档/Git/QtPro/ALGS/CMakeFiles/edit_cache.dir
+/home/lmq/文档/Git/QtPro/ALGS/CMakeFiles/rebuild_cache.dir
+/home/lmq/文档/Git/QtPro/ALGS/CMakeFiles/ALGS.dir
